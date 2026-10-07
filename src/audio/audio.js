@@ -91,7 +91,7 @@ export function createAudio(game) {
     sides = SIDE.map(() => ctx.createGain());
     underBus = ctx.createGain(); underBus.connect(sides[0]).connect(sfx);
     vox = ctx.createGain(); vox.gain.value = VOX; vox.connect(sides[2]).connect(mix);
-    const rev = ctx.createConvolver(); rev.buffer = makeIR();
+    const rev = ctx.createConvolver(); rev.buffer = makeIR(ctx.sampleRate);
     revIn = ctx.createGain(); revIn.connect(rev); rev.connect(sides[3]).connect(mix);   // the wash ducks under hits too
     bedDuck = ctx.createGain(); bedDuck.connect(mix);
     bedBus = ctx.createGain(); bedBus.connect(sides[1]).connect(bedDuck);

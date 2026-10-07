@@ -1,56 +1,40 @@
-// Boot, flow and the fixed 60 Hz loop. Sim modules (hero, combat, crowd, actors, pickups, musou, story, camera control yaw) advance only
-// in step(); render-side modules read sim state in render() and never write it.
-// Flow: title → select → loading → (story: prologue →) battle → (story / trial: result →) title. Each non-battle state is a DOM screen (index.html
-// #title #select #loading #prologue #result, modules below: createX(el, flow) → { enter(ctx), exit(), view? }; view(scene, camera,
-// focus, dt) = optional render-only camera/stage hook run after the gameplay rig while that screen is up); the sim only steps in
-// 'battle' and not paused (Esc: pause menu #menu). startBattle() resets the sim for a character / mode / chapter.
-// ctx through the flow: title → select { mode, ch, map } (mode 'story': ch = the chapter, story/chapters.js; 'trial':
-// ch = the trial, story/trials.js; 'free': ch = the battlefield's chapter, map = its field) → loading / prologue / battle
-// { mode, ch, map, char, art?, retry? } → result (+ win, stats, reason?, diff, rec?) → title (+ mode, ch after a win:
-// the chapter / trial panel opens there). rec = core/progress.js record()'s result for the win.
-// flow.go() returns a promise that settles once the new state's materials are compiled and two frames have presented
-// (menu.js inkWipe holds the ink until then; the page boots under it, inkBoot). Every screen change but prologue →
-// battle (its own fade onto the live field) goes through the ink wipe; the HUD slides in on each battle entry (#hud.in).
-// 'loading' (after 出陣, or 再戰 on the result) runs deploy(): once the card is fully uncovered, startBattle for the chosen
-// officer (flow.go('battle') then keeps it: no second reset under a visible field), compile, warm frames
-// (the bar tracks those real stages), a minimum dwell, then ink on into the prologue / battle — the officer on the field
-// is the chosen one before anything of the field is seen again, and his kit's first draws never stall on screen.
-// Select → loading also snaps the select stage's key-art frame of the officer (snapArt) for the loading card and result.
-// Maps: startBattle loads the battle's map (world.load: in-page, under the loading card / ink); the title and select
-// always stand on HOME (flow.go('title') swaps back under the ink and clears the last battle's soldiers).
-// Dev shortcut: ?go=free|story|trial[&char=id][&ch=chapter / trial id][&map=map id] skips the screens straight into a
-// battle (story without &ch: the first chapter that lists the officer).
+// 十二使君 · Thập Nhị Sứ Quân — boot, flow and the fixed 60 Hz loop of the second game on the Voxel Musou engine.
+// This is src/main.js re-pointed at the overlay (suquan/index.html importmap): every import names the ENGINE path
+// ('../../src/…'); the importmap swaps the content modules (officers, NPCs, armies, maps, chapters, trials, progress,
+// difficulty, UI screens) for this game's versions under suquan/src/, so the engine modules that import them get ours
+// too. Only the flow strings (Vietnamese) and the save namespace differ from src/main.js; the flow itself is the same
+// (see the header there: title → select → loading → (story: prologue →) battle → result → title).
 import * as THREE from 'three';
-import { vrng, rng } from './core/rng.js';
-import { emit, on, collect } from './core/events.js';
-import { createInput } from './core/input.js';
-import { createPost } from './post/post.js';
-import { createWorld } from './world/world.js';
-import { createHero, createHeroView } from './hero/hero.js';
-import { createCrowd } from './crowd/crowd.js';
-import { createCrowdView } from './crowd/view.js';
-import { armyPair, FREE_ARMY } from './crowd/armies.js';
-import { createCombat } from './combat/combat.js';
-import { createActors } from './actors/actors.js';
-import { createActorsView } from './actors/view.js';
-import { createPickups, createPickupsView } from './actors/pickups.js';
-import { createCamSim, createCameraRig } from './camera/camera.js';
-import { createVfx } from './vfx/vfx.js';
-import { createHud } from './ui/hud.js';
-import { createAudio } from './audio/audio.js';
-import { CHARS, DEFAULT_CHAR } from './chars/index.js';
-import { spawnPoint, MAP } from './world/map.js';
-import { HOME } from './world/maps/index.js';
-import { createStory } from './story/index.js';
-import { CHAPTERS, chapter } from './story/chapters.js';
-import { createTitle, CONTROLS } from './ui/title.js';
-import { createSelect } from './ui/select.js';
-import { createLoading } from './ui/loading.js';
-import { inkWipe, inkBoot, wiping, createNav, sfx, replay } from './ui/menu.js';
-import { createPrologue } from './story/prologue.js';
-import { createResult } from './story/result.js';
-import { difficulty } from './core/difficulty.js';
-import { record } from './core/progress.js';
+import { vrng, rng } from '../../src/core/rng.js';
+import { emit, on, collect } from '../../src/core/events.js';
+import { createInput } from '../../src/core/input.js';
+import { createPost } from '../../src/post/post.js';
+import { createWorld } from '../../src/world/world.js';
+import { createHero, createHeroView } from '../../src/hero/hero.js';
+import { createCrowd } from '../../src/crowd/crowd.js';
+import { createCrowdView } from '../../src/crowd/view.js';
+import { armyPair, FREE_ARMY } from '../../src/crowd/armies.js';
+import { createCombat } from '../../src/combat/combat.js';
+import { createActors } from '../../src/actors/actors.js';
+import { createActorsView } from '../../src/actors/view.js';
+import { createPickups, createPickupsView } from '../../src/actors/pickups.js';
+import { createCamSim, createCameraRig } from '../../src/camera/camera.js';
+import { createVfx } from '../../src/vfx/vfx.js';
+import { createHud } from '../../src/ui/hud.js';
+import { createAudio } from '../../src/audio/audio.js';
+import { CHARS, DEFAULT_CHAR } from '../../src/chars/index.js';
+import { spawnPoint, MAP } from '../../src/world/map.js';
+import { HOME } from '../../src/world/maps/index.js';
+import { createStory } from '../../src/story/index.js';
+import { CHAPTERS, chapter } from '../../src/story/chapters.js';
+import { createTitle, CONTROLS } from '../../src/ui/title.js';
+import { createSelect } from '../../src/ui/select.js';
+import { createLoading } from '../../src/ui/loading.js';
+import { inkWipe, inkBoot, wiping, createNav, sfx, replay } from '../../src/ui/menu.js';
+import { createPrologue } from '../../src/story/prologue.js';
+import { createResult } from '../../src/story/result.js';
+import { difficulty } from '../../src/core/difficulty.js';
+import { record } from '../../src/core/progress.js';
 
 const params = new URLSearchParams(location.search);
 const ENEMIES = Math.max(0, Math.min(2000, params.get('enemies') ? Number(params.get('enemies')) | 0 : 300));
@@ -150,8 +134,8 @@ function startBattle({ char = DEFAULT_CHAR, mode = 'free', ch, map } = {}) {
   game.actors.reset(); game.pickups.reset();                                              // C5
   game.story.reset({ mode, char, ch });                                                    // C2
   menu.querySelector('.t').innerHTML = `${who.name.zh}<i>${who.seal}</i>`;
-  menu.querySelector('.sub').innerHTML = `戰局暫停・${game.diff.zh}<small>Battle paused · ${game.diff.en}</small>`;
-  document.title = `${who.name.zh} — Voxel Musou`;
+  menu.querySelector('.sub').innerHTML = `Tạm dừng · ${game.diff.zh}<small>Battle paused · ${game.diff.en}</small>`;
+  document.title = `${who.name.zh} — Thập Nhị Sứ Quân`;
   emit('scenario', { mode, char, ch, map });
 }
 
@@ -169,12 +153,12 @@ const menu = $('menu'), hudEl = $('hud');
 menu.querySelector('.hint').insertAdjacentHTML('beforebegin', `<table>${CONTROLS.map(([zh, en, kb, pad]) => `<tr><td>${zh}<small>${en}</small></td><td>${kb}</td><td class="pad">${pad}</td></tr>`).join('')}</table>`);
 let paused = false, state = null, ctx = {}, hold = false;   // hold: loading, no renders until the new kit is compiled
 // pause menu: title-screen vocabulary (diamond + swash on the focused item), 繼續 focused on open, ↑/↓ / pad move,
-// Enter / A confirm, Esc / B resume. 撤退 asks once (確定撤退？), a second confirm ink-wipes to the title.
+// Enter / A confirm, Esc / B resume. Rút quân asks once, a second confirm ink-wipes to the title.
 const mBtns = [$('go'), $('quit')], quitEl = $('quit');
 let mCur = 0, quitArm = false;
 const armQuit = (v) => {
   quitArm = v; quitEl.classList.toggle('arm', v);
-  quitEl.innerHTML = v ? '確定撤退？<small>Confirm · progress is lost</small>' : '撤退<small>Quit to title</small>';
+  quitEl.innerHTML = v ? 'Chắc chắn rút quân?<small>Confirm · progress is lost</small>' : 'Rút quân<small>Quit to title</small>';
 };
 const mFocus = (i) => {
   mCur = (i + mBtns.length) % mBtns.length;
@@ -238,11 +222,11 @@ async function deploy(c) {
   while (wiping()) await nextFrame();
   if (state !== 'loading') return;
   const t0 = performance.now(), stage = async (p, zh, en) => { L.progress(p, zh, en); await nextFrame(); await nextFrame(); };
-  await stage(0.18, '點將', 'Summoning the officer');
+  await stage(0.18, 'Điểm tướng', 'Summoning the officer');
   startBattle(c);
-  await stage(0.5, '佈陣', 'Deploying the ranks');
+  await stage(0.5, 'Bày trận', 'Deploying the ranks');
   await post.compile(scene, camRig.camera);
-  await stage(0.82, '整軍備戰', 'Preparing the field');
+  await stage(0.82, 'Chỉnh quân xuất trận', 'Preparing the field');
   hold = false;                                    // the loop renders the field behind the card: shadow / first-draw variants
   for (let i = 0; i < 4; i++) await nextFrame();
   L.progress(1);

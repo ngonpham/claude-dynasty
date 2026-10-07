@@ -12,10 +12,10 @@ import { stepLocomotion, stepPhysics, setState, LOCO } from './locomotion.js';
 import { applyRoll, createDodgeGhosts } from './anims/locomotion.js';
 import { clampWalk, ground } from '../world/map.js';
 import { emit } from '../core/events.js';
-import { CHARS } from '../chars/index.js';
+import { CHARS, DEFAULT_CHAR } from '../chars/index.js';
 
 export function createHero(game) {
-  const h = { char: CHARS.zhaoyun, kit: CHARS.zhaoyun.kit, dodgeX: 0, dodgeZ: 1, anim: { from: new Float32Array(POSE_SIZE) } };
+  const h = { char: CHARS[DEFAULT_CHAR], kit: CHARS[DEFAULT_CHAR].kit, dodgeX: 0, dodgeZ: 1, anim: { from: new Float32Array(POSE_SIZE) } };
 
   /** New battle: position, facing and (optionally) a new character. */
   h.reset = ({ x = 0, z = 0, yaw = 0, char = h.char } = {}) => {

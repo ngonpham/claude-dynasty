@@ -233,6 +233,8 @@ export const CHARS = {
     kit: LUBU_KIT,
   },
 };
+/** The officer a battle falls back to when none (or an unknown id) is given: the hero's boot kit, actors without a kit. */
+export const DEFAULT_CHAR = 'zhaoyun';
 export const CHAR_ORDER = ['liubei', 'guanyu', 'zhangfei', 'zhaoyun', 'zhugeliang', 'huangzhong', 'lubu'].filter((id) => CHARS[id]);
 
 /** Paint a char's 20×20 portrait into a canvas (width/height 20; scale it with CSS, image-rendering: pixelated). */

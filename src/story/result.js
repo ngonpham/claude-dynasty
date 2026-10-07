@@ -11,7 +11,7 @@
 // UNLOCKS entry. Three notices fit above the epilogue and bottom prompts at 720p (16:9 and 4:3).
 // ctx in: { win, stats: { kos, time, hpMax, maxChain, dmg, rank? }, reason?: {zh, en}, mode ('story' | 'trial'), ch,
 // char, art?, diff (core/difficulty.js tier), rec?: { first, prev, fresh, unlocks } }.
-import { CHARS, paintPortrait } from '../chars/index.js';
+import { CHARS, DEFAULT_CHAR, paintPortrait } from '../chars/index.js';
 import { CHAPTERS, chapter } from './chapters.js';
 import { inkWipe, afterWipe, createNav } from '../ui/menu.js';
 
@@ -37,7 +37,7 @@ export function createResult(el, flow) {
   return {
     enter(c) {
       ctx = c; gone = false;
-      const { win, stats: s } = c, ch = CHARS[c.char] || CHARS.zhaoyun, C = chapter(c.ch), { CH } = C;
+      const { win, stats: s } = c, ch = CHARS[c.char] || CHARS[DEFAULT_CHAR], C = chapter(c.ch), { CH } = C;
       const epi = C.EPILOGUE[ch.id] || Object.values(C.EPILOGUE)[0], k = CHAPTERS.indexOf(C), after = k >= 0 ? CHAPTERS[k + 1] : null;   // a trial: no next
       const R = c.rec, was = R?.prev;                        // records: what this win beat (was: the cell before it)
       const notices = [R?.first && after ? `<p class="rs-unlock">${after.CH.num.zh}「${after.CH.title.zh}」已開啟<small>${after.CH.num.en} · ${after.CH.title.en} unlocked</small></p>` : '',

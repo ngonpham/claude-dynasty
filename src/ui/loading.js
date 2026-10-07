@@ -7,7 +7,7 @@
 // line; a tip (心得) and a gold brush-stroke progress bar with the current set-up stage along the bottom. No art (dev
 // entry): the plain background.
 // ctx in: { mode ('story' | 'trial' | 'free'), ch, char, art? }. main.js drives progress(p, zh?, en?) and ready(); nothing here touches the sim.
-import { CHARS } from '../chars/index.js';
+import { CHARS, DEFAULT_CHAR } from '../chars/index.js';
 import { replay } from './menu.js';
 import { difficulty } from '../core/difficulty.js';
 import { chapter } from '../story/chapters.js';
@@ -48,7 +48,7 @@ export function createLoading(el) {
   const state = (zh, en) => { $('.l-state b').textContent = zh; $('.l-state small').textContent = en; };
   return {
     enter(c) {
-      const ch = CHARS[c.char] || CHARS.zhaoyun, [zh, en] = modeLabel(c);
+      const ch = CHARS[c.char] || CHARS[DEFAULT_CHAR], [zh, en] = modeLabel(c);
       el.style.setProperty('--acc', ch.accent);
       $('.l-art').style.backgroundImage = c.art ? `url("${c.art}")` : 'none';
       el.classList.remove('ready'); replay(el, 'in');

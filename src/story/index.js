@@ -30,7 +30,7 @@
 import { emit, on } from '../core/events.js';
 import { zone, anchor, setGate, GATES } from '../world/map.js';
 import { ST } from '../crowd/crowd.js';
-import { CHARS } from '../chars/index.js';
+import { CHARS, DEFAULT_CHAR } from '../chars/index.js';
 import { NPCS } from '../chars/npc/index.js';
 import { chapter } from './chapters.js';
 
@@ -49,7 +49,7 @@ export function createStory(game) {
     return [q.x + a * hw, q.z + b * hd];
   }
   const xz = (P) => { const [x, z] = pos(P); return { x, z }; };
-  const S = { mode: 'free', char: 'zhaoyun', t: 0, done: false, maxChain: 0, downT: -1 };
+  const S = { mode: 'free', char: DEFAULT_CHAR, t: 0, done: false, maxChain: 0, downT: -1 };
   const st = { morale: undefined, target: null, timer: null, defend: null };
   const DLG_GAP = 12;                            // sim frames between two queued lines
   let C = null;                                  // the chapter module (story mode)
@@ -148,7 +148,7 @@ export function createStory(game) {
     for (const l of b.say || []) say(l);
   }
 
-  st.reset = ({ mode = 'free', char = 'zhaoyun', ch } = {}) => {
+  st.reset = ({ mode = 'free', char = DEFAULT_CHAR, ch } = {}) => {
     C = mode === 'free' ? null : chapter(ch);
     Object.assign(S, { mode, char, ally: C?.CH.ally?.[char], t: 0, done: false, maxChain: 0,
       downT: -1, final: null, dmg: 0, beat: 0, beatT: 0, koBase: 0, off: {}, want: {}, dead: {}, q: [], sayUntil: 0, limit: Infinity, back: -Infinity,
