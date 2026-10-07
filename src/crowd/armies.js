@@ -22,6 +22,9 @@ const RED = 0xc02a1c;
 // rivet · cloth (sleeves, skirt flaps) · pants · wrap / wrapD (leg wraps) · boot · skin / skinD / eye / brow · helm /
 // helmHi · band (headband) · belt / buckle · bracer · tassel (helmet top) · crest (captain's horsehair crest) · weapon
 // (spear / glaive / standard tassels) · shield [face, face dark, far-LOD face]
+// · headgear (grunts only, optional): 'helm' (default: lacquered helmet, neck guard, headband, top tassel) | 'wrap'
+// (a cloth head-wrap in helm / helmHi with a band edge, a topknot in brow, knot tails) | 'hat' (a conical hat in helm / helmHi
+// over a band, tassel knot on the crown, a chin strap in lace)
 export const GRUNT = {
   armor: 0x3e3430, hi: 0x6a5a50, lace: 0x1d1513, plate: 0x564842, rivet: 0xa07e4c,
   cloth: 0x5e3026, pants: 0x3a302b, wrap: 0x9a8566, wrapD: 0x5c4c3c, boot: 0x2a1d16,

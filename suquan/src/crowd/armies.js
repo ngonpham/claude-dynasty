@@ -2,7 +2,8 @@
 // officer palettes are the engine's (GRUNT / OFFICER, re-exported); the factions are the Đinh host and the warlords
 // it brings to heel, 944–968. Officer `look.helm`: 'wing' | 'horn' | 'crest' | 'cap' (crowd/view.js).
 // Look notes (10th-century Giao Châu, game-stylised): lacquered rattan / buffalo-hide lamellar instead of iron, cloth
-// head-wraps (khăn) read through the helmet colours, bare tanned forearms, red / ochre / indigo dyes.
+// head-wraps (khăn: grunt headgear 'wrap'), conical hats ('hat'), bare tanned forearms, red / ochre / indigo dyes; the
+// court army and Đỗ Cảnh Thạc's old Ngô veterans keep lacquered helmets.
 //   dinh    Đinh host (ally everywhere): oxblood lamellar, crimson coats and head-wraps, straw-gold tassels (cờ lau)
 //   ngo     the Ngô court army of Nam Tấn Vương (ch. I): black lacquer, imperial ochre-yellow, gold rivets
 //   nguyen  Nguyễn Siêu of Tây Phù Liệt (ch. II): river indigo, steel-blue, white tassels
@@ -20,7 +21,7 @@ export const ARMIES = {
     name: { zh: 'Quân Đinh', en: 'Đinh Army' }, glyph: '丁', flag: '#a3261a', ink: '#f2d68a', ui: '#ff7a4e', glow: [0.22, 0.04, 0, 0],
     grunt: {
       ...SKIN, armor: 0x4a2a20, hi: 0x7a4a36, lace: 0x1e100c, plate: 0x5e3426, rivet: 0xc89a50, cloth: 0x8e2418, pants: 0x3a2a22,
-      wrap: 0xb09868, wrapD: 0x6a5a40, boot: 0x2a1c14, helm: 0x6e1c14, helmHi: 0xb04a30, band: 0xd8301c, belt: 0x3c2418,
+      wrap: 0xb09868, wrapD: 0x6a5a40, boot: 0x5a3a26, helm: 0x9a2418, helmHi: 0xc4462c, band: 0x3a1a10, belt: 0x3c2418, headgear: 'wrap',
       buckle: 0xc8a050, bracer: 0x3a2418, tassel: 0xe0c070, crest: 0xe0c070, weapon: 0xb02a1a, shield: [0x8a2a18, 0x5a1a10, 0x76241a],
     },
     officer: {
@@ -58,7 +59,7 @@ export const ARMIES = {
     name: { zh: 'Quân Nguyễn Siêu', en: "Nguyễn Siêu's Army" }, glyph: '阮', flag: '#24488a', ink: '#f0e6c8', ui: '#6aa8ff', glow: [0, 0, 0.34, 0],
     grunt: {
       ...SKIN, armor: 0x26303e, hi: 0x5a6a80, lace: 0x0e121a, plate: 0x344256, rivet: 0xa8b0bc, cloth: 0x223a6e, pants: 0x262c38,
-      wrap: 0x8a8e98, wrapD: 0x50545e, boot: 0x1a1c22, helm: 0x22304a, helmHi: 0x8a9ab0, band: 0x2e6ad8, belt: 0x22242c,
+      wrap: 0x8a8e98, wrapD: 0x50545e, boot: 0x1a1c22, helm: 0xb49c6a, helmHi: 0xd8c48e, band: 0x22386a, belt: 0x22242c, headgear: 'hat',
       buckle: 0xb8a868, bracer: 0x20283a, tassel: 0xe8eef6, crest: 0x2e6ad8, weapon: 0x2a5ac0, shield: [0x24447e, 0x16284e, 0x1e3868],
     },
     officer: {
@@ -96,7 +97,7 @@ export const ARMIES = {
     name: { zh: 'Quân Kiều Công Hãn', en: "Kiều Công Hãn's Army" }, glyph: '矯', flag: '#2a6a46', ink: '#f2e6c8', ui: '#60e0a0', glow: [0, 0.14, 0, 0],
     grunt: {
       ...SKIN, armor: 0x2c3628, hi: 0x5a7254, lace: 0x101810, plate: 0x3c4c38, rivet: 0xb89a50, cloth: 0x2a5e3a, pants: 0x2c3428,
-      wrap: 0x8a8a66, wrapD: 0x52523c, boot: 0x1e1c16, helm: 0x30402e, helmHi: 0x8a9a74, band: 0x2a8a4a, belt: 0x2a2a1c,
+      wrap: 0x8a8a66, wrapD: 0x52523c, boot: 0x4a3a24, helm: 0x2a5e3a, helmHi: 0x4a8a5a, band: 0xc8301e, belt: 0x2a2a1c, headgear: 'wrap',
       buckle: 0xc0a050, bracer: 0x283424, tassel: 0xc8301e, crest: 0xc8301e, weapon: 0x2a7040, shield: [0x2a5a38, 0x182e1e, 0x22482e],
     },
     officer: {

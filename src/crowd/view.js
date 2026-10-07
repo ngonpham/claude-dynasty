@@ -42,9 +42,10 @@ const withLook = (P, L) => ({ ...P,
 // · hips ±0.095 @ -0.02 · knee -0.42 · hand -0.5 from the shoulder
 const J = { waist: 0.04, neck: 0.5, shX: 0.235, shY: 0.43, hipX: 0.095, hipY: -0.02, knee: 0.42, hand: 0.5 };
 
-/** Body part box lists for palette C (armies.js GRUNT / OFFICER keys); officer: cape, beard and helmet variant C.helmet. */
+/** Body part box lists for palette C (armies.js GRUNT / OFFICER keys); officer: cape, beard and helmet variant C.helmet;
+ *  grunt: headgear variant C.headgear ('helm' default | 'wrap' | 'hat', armies.js header). */
 function bodyParts(C, officer) {
-  const helm = officer && C.helmet;
+  const helm = officer && C.helmet, gear = !officer && C.headgear;
   const L = lamel(C.armor, C.hi, C.lace);
   const plate = (x, y, z, i, j) => ((i + j) % 4 === 0 ? C.rivet : j % 4 === 3 ? C.hi : C.plate);
   const pauld = (x, y, z, i, j) => (j === 0 ? C.hi : j % 2 ? C.armor : shade(C.armor, 0.8));
@@ -75,7 +76,19 @@ function bodyParts(C, officer) {
     b([-0.07, 0.12, 0.1], [-0.03, 0.155, 0.12], C.eye, true), b([0.03, 0.12, 0.1], [0.07, 0.155, 0.12], C.eye, true),
     b([-0.08, 0.16, 0.1], [-0.02, 0.18, 0.12], C.brow, true), b([0.02, 0.16, 0.1], [0.08, 0.18, 0.12], C.brow, true),
     b([-0.015, 0.08, 0.11], [0.02, 0.13, 0.135], C.skinD),                             // nose
-    ...(helm === 'cap' ? [                                                             // officer's cap: no helmet
+    ...(gear === 'wrap' ? [                                                            // cloth head-wrap (khăn) over a topknot
+      b([-0.112, 0.17, -0.112], [0.112, 0.29, 0.112], (x, y, z, i, j) => ((i + j) % 4 === 0 ? shade(C.helm, 0.78) : j % 3 === 2 ? C.helmHi : C.helm)),
+      b([-0.125, 0.17, -0.125], [0.125, 0.205, 0.125], C.band),                        // the band's edge round the brow
+      b([-0.045, 0.28, -0.07], [0.045, 0.36, 0.02], C.brow),                           // topknot
+      b([-0.05, 0.05, -0.15], [-0.01, 0.2, -0.115], C.band), b([0.01, 0.09, -0.15], [0.05, 0.2, -0.115], C.band),   // knot tails
+    ] : gear === 'hat' ? [                                                           // conical hat (nón) over a head-wrap
+      b([-0.108, 0.17, -0.108], [0.108, 0.24, 0.108], C.band),
+      b([-0.24, 0.235, -0.24], [0.24, 0.265, 0.24], (x, y, z, i, j) => ((i + j) % 3 ? C.helm : C.helmHi)),
+      b([-0.165, 0.265, -0.165], [0.165, 0.305, 0.165], C.helm),
+      b([-0.09, 0.305, -0.09], [0.09, 0.345, 0.09], C.helmHi),
+      b([-0.035, 0.345, -0.035], [0.035, 0.37, 0.035], C.tassel),                      // the crown knot (reads from above)
+      b([-0.105, 0.03, 0.06], [-0.09, 0.2, 0.08], C.lace), b([0.09, 0.03, 0.06], [0.105, 0.2, 0.08], C.lace),   // chin strap
+    ] : helm === 'cap' ? [                                                             // officer's cap: no helmet
       b([-0.105, 0.2, -0.115], [0.105, 0.27, 0.1], C.brow),                            // hair
       b([-0.095, 0.25, -0.1], [0.095, 0.38, 0.07], CAP), b([-0.08, 0.34, -0.13], [0.08, 0.44, -0.02], CAP),   // crown, raised back
       b([-0.32, 0.36, -0.12], [0.32, 0.4, -0.08], CAP),                                // the long side flaps
@@ -88,7 +101,7 @@ function bodyParts(C, officer) {
       b([-0.05, 0.05, -0.165], [-0.01, 0.2, -0.13], C.band), b([0.01, 0.09, -0.165], [0.05, 0.2, -0.13], C.band),   // knot tails
     ]),
   ];
-  if (!officer) p.head.push(b([-0.035, 0.34, -0.035], [0.035, 0.42, 0.035], C.tassel));   // top tassel (reads from above)
+  if (!officer && !gear) p.head.push(b([-0.035, 0.34, -0.035], [0.035, 0.42, 0.035], C.tassel));   // top tassel (reads from above)
   else if (helm === 'horn') {
     p.head.push(
       b([-0.11, -0.04, 0.05], [0.11, 0.08, 0.135], BEARD),                             // full beard
