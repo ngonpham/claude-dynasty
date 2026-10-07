@@ -27,3 +27,7 @@ export const PL_MAP = { art: '<g class="pl-labels"></g>', arrows: [] };
 export const EPILOGUE = {
   dinhbolinh: { zh: ['Tây Phù Liệt đã về tay nhà Đinh.'], en: ['Tây Phù Liệt falls to the house of Đinh.'] },
 };
+
+/** Tử Thủ (死守), the defence trial on this field (trial format: src/story/trials.js header), or null until it exists:
+ *  suquan/src/story/trials.js lists it after Thiên Nhân Trảm (unlock 'tuthu': core/progress.js). */
+export const TRIAL = null;

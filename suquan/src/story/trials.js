@@ -2,7 +2,10 @@
 // header). Text: .zh = Vietnamese, .en = English, seals Hán.
 //   thiennhan  Thiên Nhân Trảm (千人斬): 1,000 KOs within 3:00 below the Hoa Lư karsts — open from the start
 //   binhsu     Bình Thập Nhị Sứ (平使君): the warlords one after another, duel by duel — opens with chapter IV
-// (a defence trial on the Tây Phù Liệt crossing joins them once that field is final: core/progress.js UNLOCKS 'tuthu')
+//   tuthu      Tử Thủ (死守): hold the Tây Phù Liệt crossing — defined with its field in ./tayphuliet.js (TRIAL), opens
+//              with chapter II
+import { TRIAL as tuthu } from './tayphuliet.js';
+
 const NUM = { zh: 'Thử thách', en: 'TRIAL' };
 /** One epilogue for every officer (result.js: a missing hero = the first entry). */
 const epi = (zh, en) => ({ any: { zh: [zh], en: [en] } });
@@ -61,4 +64,4 @@ const binhsu = {
   EPILOGUE: epi('Bốn sứ quân lần lượt ngã ngựa, khắp cõi không ai còn dám xưng hùng.', 'Four warlords fell one after another. No one in the land dares call himself lord now.'),
 };
 
-export const TRIALS = [thiennhan, binhsu];
+export const TRIALS = [thiennhan, tuthu, binhsu].filter(Boolean);
