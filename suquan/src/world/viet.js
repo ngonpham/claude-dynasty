@@ -326,3 +326,91 @@ export function haystack(k, x, z, s = 1) {
   for (let i = 0; i < 5; i++) props.push({ s: [2.4 * s * (1 - i * 0.17), 0.6 * s, 2.4 * s * (1 - i * 0.17)], p: [x, gy + 0.3 * s + i * 0.55 * s, z], r: [0, R.range(0, 3), 0], c: shade(0xc8a85a, R.range(0.85, 1.05)) });
   props.push({ s: [0.12, 1.2 * s, 0.12], p: [x, gy + 3.2 * s, z], c: 0x5a4030 });
 }
+
+// ================================================================ Chương I «Hoa Lư» additions (maps/hoalu.js)
+//   gateTower(k, x, z, o)        cổng thành: a citadel gatehouse in the rammed-earth wall — two battered earth bastions
+//                                laced with timber, a post-and-lintel passage, a railed timber gate hall (lầu) on the wall
+//                                walk under a curved dark-tile roof, a name board on the outer face. Static: the doors are
+//                                the map's (build). o = { pass = 7.2 passage width, depth = 10, h = 8, w = 22, yaw = 0 }
+//                                (local +z = the outer face). Solid: give the def props footprints for the bastions.
+//   parasol(k, x, y, z, s, col)  lọng: a royal tiered parasol on its staff, a fringe of tassels (col = canopy colour)
+//   ladder(k, x, z, yaw, h, o)   a scaling ladder leant against a wall face of height h (o = { lean = 0.3, y = ground })
+//   stakes(k, pts, o)            chông tre: a row of sharpened bamboo stakes in crossed pairs along a polyline, leaning
+//                                toward its left side (o = { gap = 1.1, h = 1.8 })
+/** Cổng thành: rammed-earth bastions, the passage frame, the gate hall above. Doors not included. */
+export function gateTower(k, x, z, { pass = 7.2, depth = 10, h = 8, w = 22, yaw = 0 } = {}) {
+  const gy = k.ground(x, z), L = k.local(x, gy, z, yaw), R = k.r;
+  const bw = (w - pass) / 2, EARTH = [0x8a6646, 0x95714e, 0x7e5c40, 0x86684a], LACE = 0x4a3424, D = depth + 1.4;
+  // bastions: 0.5 m lifts, battered on the outer three faces (the passage side stays plumb), timber lacing every 4th lift
+  for (const sx of [-1, 1]) for (let y = 0, row = 0; y < h - 0.01; y += 0.5, row++) {
+    const bat = y * 0.07, lace = row % 4 === 3, wb = bw - bat, cx = sx * (pass / 2 + wb / 2);
+    L(cx, y + 0.25, 0, [wb, 0.5, D - bat * 2], lace ? shade(LACE, R.range(0.85, 1.1)) : shade(EARTH[R.int(0, 3)], R.range(0.9, 1.06) * (row % 6 < 3 ? 1 : 0.95)));
+    if (row % 3 === 1 && y > 1) for (let q = 0; q < 3; q++) L(cx + R.range(-wb / 3, wb / 3), y + 0.25, (D - bat * 2) / 2 + 0.02, [0.22, 0.2, 0.06], 0x2a1c14);   // putlog holes
+  }
+  // passage: jamb posts both sides every 2.5 m, a lintel and ceiling planks, the earth over it up to the wall walk
+  const ph = Math.min(6, h - 1.6);
+  for (let lz = -depth / 2 + 0.4; lz <= depth / 2; lz += 2.4) for (const sx of [-1, 1]) L(sx * (pass / 2 - 0.2), ph / 2, lz, [0.42, ph, 0.42], 0x3a2618);
+  L(0, ph + 0.25, 0, [pass + 0.6, 0.5, depth], 0x2e1e14);
+  for (const sz of [-1, 1]) L(0, ph + 0.45, sz * (depth / 2 + 0.1), [pass + 2.2, 0.8, 0.8], 0x4a2f20);                          // lintels, both faces
+  L(0, (ph + 0.5 + h) / 2, 0, [pass + 0.2, h - ph - 0.5, depth], shade(EARTH[1], 0.92));
+  // name board on the outer face over the lintel (the map may lay its lettering over it)
+  L(0, ph + 1.45, depth / 2 + 0.15, [3.4, 1.15, 0.14], 0x1e1410); L(0, ph + 1.45, depth / 2 + 0.1, [3.8, 1.45, 0.08], 0xa07c34);
+  // wall walk deck + timber parapet front and back
+  L(0, h + 0.15, 0, [w + 1, 0.3, depth + 0.6], 0x5a4632);
+  for (const sz of [-1, 1]) {
+    for (let lx = -w / 2; lx <= w / 2 + 0.01; lx += 1.6) L(lx, h + 0.85, sz * (depth / 2 + 0.1), [0.22, 1.4, 0.22], 0x4a3424);
+    for (const ry of [0.55, 1.35]) L(0, h + ry, sz * (depth / 2 + 0.1), [w + 0.4, 0.14, 0.12], 0x5a4030);
+  }
+  // gate hall: red-lacquered posts on stone bases, a railed gallery, woven walls inside, the curved tile roof
+  const hw = w - 5, hd = depth - 3.2, fy = h + 0.3, PH = 3.3;
+  L(0, fy + 0.12, 0, [hw + 1.2, 0.24, hd + 1.2], 0x4b3d38);
+  const nc = 5;
+  for (let i = 0; i < nc; i++) for (const sz of [-1, 1]) {
+    const lx = -hw / 2 + (i / (nc - 1)) * hw;
+    L(lx, fy + 0.2, sz * hd / 2, [0.6, 0.4, 0.6], 0x7a7066);
+    L(lx, fy + PH / 2, sz * hd / 2, [0.34, PH, 0.34], 0x7a2418);
+  }
+  for (const sz of [-1, 1]) {
+    L(0, fy + 1.0, sz * (hd / 2 + 0.5), [hw + 0.6, 0.12, 0.12], 0x8a2a1c);                                                 // gallery rail
+    for (let lx = -hw / 2; lx <= hw / 2; lx += 1.1) L(lx, fy + 0.6, sz * (hd / 2 + 0.5), [0.1, 0.8, 0.1], 0x6a2016);
+    L(0, fy + PH - 0.25, sz * hd / 2, [hw + 0.6, 0.4, 0.3], 0x5a2a1c);                                                     // lintel beam
+  }
+  L(0, fy + PH * 0.55, 0, [hw - 1.2, PH * 0.9, hd - 1.4], shade(0xa48a58, R.range(0.92, 1.02)));                          // woven inner walls
+  for (let i = 0; i < 3; i++) L(-hw / 3 + i * hw / 3, fy + PH * 0.5, hd / 2 - 0.68, [1.1, 1.6, 0.08], 0x24160e);           // dark openings
+  tileRoof(L, hw * 1.32, hd * 1.6, fy + PH, 2.4);
+  L(0, fy + PH + 2.95, 0, [hw * 0.5, 0.35, 0.5], 0x2c2a30);                                                               // ridge
+}
+
+/** Lọng: a royal parasol — staff, three stacked canopy tiers turned 45° to each other, a fringe of hanging tassels. */
+export function parasol(k, x, y, z, s = 1, col = 0xd0a020) {
+  const { props } = k, P = 5.2 * s;
+  props.push({ s: [0.16 * s, P, 0.16 * s], p: [x, y + P / 2, z], c: 0x5a2a14 });
+  for (const [w, dy, c] of [[3.4, 0, shade(col, 0.72)], [3.1, 0.2, col], [2.3, 0.45, shade(col, 0.94)], [1.3, 0.7, shade(col, 0.88)], [0.4, 0.95, 0xe8c860]])
+    for (const a of [0, Math.PI / 4]) props.push({ s: [w * s, 0.24 * s, w * s], p: [x, y + P + dy * s, z], r: [0, a, 0], c });
+  for (let q = 0; q < 8; q++) { const a = q * Math.PI / 4 + 0.2; props.push({ s: [0.1 * s, 0.9 * s, 0.1 * s], p: [x + Math.sin(a) * 1.6 * s, y + P - 0.45 * s, z + Math.cos(a) * 1.6 * s], c: q % 2 ? 0x8a1e14 : 0xe0b440 }); }
+}
+
+/** A scaling ladder of two bamboo rails and rungs, leant against a wall face of height h; (x, z) = its foot, yaw = the
+ *  direction it climbs toward (the wall). */
+export function ladder(k, x, z, yaw, h, { lean = 0.3, y = k.ground(x, z) } = {}) {
+  const len = h / Math.cos(lean) + 0.5, L = k.local(x, y, z, yaw), dz = Math.sin(lean) * len / 2, dy = Math.cos(lean) * len / 2;
+  for (const sx of [-0.42, 0.42]) L(sx, dy, dz, [0.13, len, 0.13], 0x7e7a44, [lean, 0, 0]);
+  for (let q = 0.5; q < len - 0.3; q += 0.5) L(0, Math.cos(lean) * q, Math.sin(lean) * q, [0.84, 0.07, 0.07], 0x5a4a2a);
+}
+
+/** Chông tre: crossed pairs of sharpened bamboo stakes along a polyline, every `gap` m, leaning out to its left side. */
+export function stakes(k, pts, { gap = 1.1, h = 1.8 } = {}) {
+  const R = k.r;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [ax, az] = pts[i], [bx, bz] = pts[i + 1], Lg = Math.hypot(bx - ax, bz - az), yaw = Math.atan2(bx - ax, bz - az);
+    for (let d = gap / 2; d < Lg; d += gap) {
+      if (R.chance(0.12)) continue;
+      const x = ax + (bx - ax) * d / Lg, z = az + (bz - az) * d / Lg, L = k.local(x, k.ground(x, z), z, yaw + Math.PI / 2), hh = h * R.range(0.85, 1.15);
+      for (const a of [-0.55, 0.55]) {
+        L(a * 0.3, hh * 0.42, 0.25, [0.12, hh, 0.12], shade(0x8a8a48, R.range(0.85, 1.1)), [-0.6, 0, a]);
+        L(a * 0.3 + Math.sin(a) * hh * 0.45, hh * 0.86, 0.25 + hh * 0.3, [0.08, 0.3, 0.08], 0xc8b878, [-0.6, 0, a]);   // cut tip
+      }
+      L(0, 0.5, 0, [0.9, 0.1, 0.1], 0x6a6a30);                                                                       // binding rail
+    }
+  }
+}
