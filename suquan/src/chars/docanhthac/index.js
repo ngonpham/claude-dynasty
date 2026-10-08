@@ -1,7 +1,7 @@
-// docanhthac: the officer entry (contract: src/chars/index.js header). PLACEHOLDER kit and portrait: the engine's
-// LUBU_KIT until this officer's own model / kit lands in this folder (model.js, kit.js).
-import { LUBU_KIT } from '../../../../src/chars/lubu/kit.js';
-import { FACE, PAL } from '../../../../src/chars/lubu/model.js';
+// docanhthac: the officer entry (contract: src/chars/index.js header): metadata, his model and portrait (model.js) and
+// his kit (kit.js: Lü Bu's halberd moveset in his own look, with a boss profile — he is chapter III's boss actor).
+import { DOCANHTHAC_KIT } from './kit.js';
+import { FACE, PAL } from './model.js';
 
 export const CHAR = {
     id: 'docanhthac', side: { zh: 'Đỗ Động Giang', en: 'Đỗ Động' },
@@ -21,5 +21,5 @@ export const CHAR = {
       copy: ['一戟橫江', '寧死不降'],
     },
     portrait: { face: FACE, pal: PAL },
-    kit: LUBU_KIT,
+    kit: DOCANHTHAC_KIT,
 };

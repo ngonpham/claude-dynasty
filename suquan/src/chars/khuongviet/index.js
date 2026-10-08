@@ -1,7 +1,7 @@
-// khuongviet: the officer entry (contract: src/chars/index.js header). PLACEHOLDER kit and portrait: the engine's
-// ZHUGELIANG_KIT until this officer's own model / kit lands in this folder (model.js, kit.js).
-import { ZHUGELIANG_KIT } from '../../../../src/chars/zhugeliang/kit.js';
-import { FACE, PAL } from '../../../../src/chars/zhugeliang/model.js';
+// khuongviet: the officer entry (contract: src/chars/index.js header): metadata, his model and portrait (model.js) and
+// his kit (kit.js: Zhuge Liang's fan moveset with a horsehair whisk, saffron light and his own seals: fx.js).
+import { KHUONGVIET_KIT } from './kit.js';
+import { FACE, PAL } from './model.js';
 
 export const CHAR = {
     id: 'khuongviet', side: { zh: 'Nhà Đinh', en: 'Đinh' },
@@ -21,5 +21,5 @@ export const CHAR = {
       copy: ['佛光護國', '萬法歸一'],
     },
     portrait: { face: FACE, pal: PAL },
-    kit: ZHUGELIANG_KIT,
+    kit: KHUONGVIET_KIT,
 };

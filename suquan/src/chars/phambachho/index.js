@@ -1,7 +1,7 @@
-// phambachho: the officer entry (contract: src/chars/index.js header). PLACEHOLDER kit and portrait: the engine's
-// ZHANGFEI_KIT until this officer's own model / kit lands in this folder (model.js, kit.js).
-import { ZHANGFEI_KIT } from '../../../../src/chars/zhangfei/kit.js';
-import { FACE, PAL } from '../../../../src/chars/zhangfei/model.js';
+// phambachho: the officer entry (contract: src/chars/index.js header): metadata, his white-tiger model and portrait
+// (model.js) and his kit (kit.js: Zhang Fei's serpent-spear moveset in his own look).
+import { PHAMBACHHO_KIT } from './kit.js';
+import { FACE, PAL } from './model.js';
 
 export const CHAR = {
     id: 'phambachho', side: { zh: 'Đằng Châu', en: 'Đằng Châu' },
@@ -21,5 +21,5 @@ export const CHAR = {
       copy: ['白虎一嘯', '千軍膽寒'],
     },
     portrait: { face: FACE, pal: PAL },
-    kit: ZHANGFEI_KIT,
+    kit: PHAMBACHHO_KIT,
 };
