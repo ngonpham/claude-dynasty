@@ -272,5 +272,14 @@ const dev = params.get('go');
 // the page opens under full ink (index.html): the first screen is built and compiled under it, then the ink sweeps off
 const devChar = params.get('char') || DEFAULT_CHAR;
 const devCh = chapter(params.get('ch') || CHAPTERS.find((m) => m.CH.heroes.includes(devChar))?.CH.id).CH.id;
+// dev preview: &actor=<CHARS or NPCS id> stands that model in front of the hero (&ax / &az metres off him, default 1.8 /
+// 4.5), facing the camera (&ay yaw, default π; role npc, held): pair it with ?go=free&enemies=0 to look at an officer /
+// NPC model in the field (tools/shot.mjs --hold=q:… orbits the camera)
+const devActor = params.get('actor');
+if (devActor) on('scenario', () => {
+  const h = game.hero, at = [h.x + Number(params.get('ax') ?? 1.8), h.z + Number(params.get('az') ?? 4.5)];
+  game.actors.spawn('preview', { kit: devActor, role: 'npc', at, yaw: Number(params.get('ay') ?? Math.PI), name: { zh: devActor, en: devActor }, seal: '試' });
+  game.actors.order('preview', 'hold', at);
+});
 inkBoot(() => dev ? flow.go('battle', { mode: ['story', 'trial'].includes(dev) ? dev : 'free', char: devChar, ch: devCh, map: params.get('map') || undefined }) : flow.go('title'));
 requestAnimationFrame(frame);
