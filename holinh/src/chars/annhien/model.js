@@ -127,8 +127,8 @@ function head() {
     // fine straight brows lifting at the outer end, clear wide eyes (white, the dark iris toward the nose, a dark lash
     // line flicked up at the outer corner), a straight small nose
     ...symH(1, 5, 11, 12, 5, 7, C.hair, false), ...symH(5, 7, 12, 13, 5, 7, C.hair, false),
-    ...symH(2, 6, 6, 9, 5, 6, C.scl), ...symH(2, 4, 6, 9, 5, 6, C.iris), ...symH(2, 3, 7, 9, 5, 6, C.eye),
-    ...symH(2, 6, 9, 10, 5, 6, C.eye), ...symH(6, 7, 9, 11, 5, 6, C.eye),
+    ...symH(2, 5, 6, 9, 5, 6, C.scl), ...symH(2, 4, 6, 9, 5, 6, C.iris), ...symH(2, 3, 7, 9, 5, 6, C.eye),
+    ...symH(2, 6, 9, 10, 5, 6, C.eye), ...symH(6, 7, 10, 11, 5, 6, C.eye),
     B([-1, 5, 6], [2, 8, 7], C.skinH), P([-1, 4, 5], [0, 5, 7], C.skinD), P([1, 4, 5], [2, 5, 7], C.skinD),
     // a small firm mouth
     P([-1, 3, 5], [2, 4, 6], C.lip), P([-2, 3, 5], [-1, 4, 6], C.skinD), P([2, 3, 5], [3, 4, 6], C.skinD),
