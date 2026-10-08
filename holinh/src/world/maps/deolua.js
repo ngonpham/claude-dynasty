@@ -592,7 +592,7 @@ function buildSet(root, k) {
       nv += (nightAt(hz) - nv) * Math.min(1, dt * 1.5); cv += (caveAt(hz) - cv) * Math.min(1, dt * 1.5);
       if (sc && sc.fog) {
         if (!saved) capture(sc);
-        apply(sc, nv, cv);
+        if (saved.hemi && saved.sun) apply(sc, nv, cv);
       }
       night.visible = nv > 0.002; nightMat.uniforms.uNight.value = nv;
       const hx = game.hero?.x ?? 0;

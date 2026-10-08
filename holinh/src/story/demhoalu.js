@@ -96,7 +96,7 @@ export const BEATS = [
     when: [{ kos: 25 }, { wait: 30 * 60 }],
     banner: { html: 'Tin dữ từ <em>nội điện</em>', en: 'Grave news from the inner palace', dur: 170 },
     say: [
-      { who: 'thive', zh: 'Tướng quân! Nội điện... thị vệ phá cửa thì đã muộn.', en: 'General! The inner hall... when the guards broke the door, it was too late.' },
+      { who: 'thive', zh: 'Tướng quân! Nội điện... chúng tôi phá được cửa thì đã muộn.', en: 'General! The inner hall... when we broke the door down, it was too late.' },
       { who: 'thive', zh: 'Không thấy kẻ ra tay. Chỉ có chiếc chén đồng còn quay trên nền.', en: 'No sign of who struck. Only a bronze cup, still turning on the floor.' },
       { who: 'hero', huutuong: ['...Lại một lần ta về muộn.', '...Late again. Once more, too late.'],
         tatuong: ['Bệ hạ... Thần đứng gác ở đây mà không hay biết gì.', 'Majesty... I stood guard here and knew nothing.'],

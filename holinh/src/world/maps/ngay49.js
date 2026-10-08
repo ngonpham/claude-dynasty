@@ -83,7 +83,7 @@ export default {
     hall: [HALL[0], HALL[1]],
   },
   // story: the south end of the outer ring, the rite's banners and the karsts ahead; free: the outer ring / rite ground
-  spawn: { story: { x: 0, z: -186, yaw: 0, tilt: -0.06 }, free: { x: 0, z: -160, yaw: 0 } },
+  spawn: { story: { x: 0, z: -186, yaw: 0, tilt: -0.06 }, free: { x: 4, z: -36, yaw: 0 } },
   water: {
     along: 'x', c: riverC, hw: RHW, bed: [1.8, 0.45], fords: [[-5.4, 5.4, -1.2]], y: -0.2, stones: 24,
     tint: { deep: 0x163028, shallow: 0x4e6a56, sun: [1, 0.84, 0.58] },
@@ -95,15 +95,15 @@ export default {
   },
   // dawn: the sun just up ahead-right (east-north-east), pale gold through the mist; blue-grey haze lying in the valleys
   sky: {
-    sunElev: 0.08, sunAz: 0.95, sunCore: [4.4, 3.6, 2.5],
+    sunElev: 0.12, sunAz: 0.95, sunCore: [4.4, 3.6, 2.5],
     haze: 0x98a2b2, hazeWarm: 0xe8b886, glow: 0xffd8a4, skyMid: 0xa8b2c6, skyTop: 0x4c6898,
     hznSun: 0xffbe78, hznAway: 0xbcbcc0, cloudRose: 0xe8b498, cloudShade: 0x7c8298, cloudLit: 0xffecc8,
     dust: [9.0, 40.0, 2.8, 0.12], dustLit: 0xe6d0ac, dustShade: 0x8490a6, apCool: 0x8c9ab8,
   },
   fog: [28, 290],
   // key: the altar's candles (not HOME: unused); fill: the violet hall faces the hero against the low sun — eased in there
-  light: { hemi: [0xb4c2dc, 0x7a7458, 2.2], sun: [0xffd8a8, 3.7], rim: [0xffc088, 1.35], dir: [0.6, 0.45, 0.66], fire: 0xffa050, key: [0, -100], fill: [70, 100, 1.0] },
-  post: { exposure: 1.22, sat: 1.16, rays: 1.1, rayTint: [1.0, 0.82, 0.56], bloom: 0.68, highTint: [1.12, 1.0, 0.82], shadowTint: [0.8, 0.92, 1.22] },
+  light: { hemi: [0xb4c2dc, 0x7a7458, 2.45], sun: [0xffd8a8, 3.7], rim: [0xffc088, 1.35], dir: [0.6, 0.45, 0.66], fire: 0xffa050, key: [0, -100], fill: [70, 100, 1.0] },
+  post: { exposure: 1.3, sat: 1.16, rays: 1.1, rayTint: [1.0, 0.82, 0.56], bloom: 0.68, highTint: [1.12, 1.0, 0.82], shadowTint: [0.8, 0.92, 1.22] },
   castle: null,
   terrain: {
     pave: (x, z) => (Math.hypot(x - RITE[0], z - RITE[1]) < PR0 + 1 ? 0.7 : 0)                // the rite's stone floor
@@ -163,13 +163,10 @@ export default {
     // ---- Sân tế: the stone floor in three steps round the mound, the altar, the ring of 49 candles (build: the 49th
     // flame), the blank banners, incense smoke, Thầy Mo's bell post, a mat for the Queen, arrows in the turf
     { const [cx, cz] = RITE, gy = k.ground(cx, cz);
-      for (let q = 0; q < 4; q++) {
-        const R = PR0 + (3 - q) * 1.6, y = gy - PLAT_H + (q + 1) * PLAT_H / 4;
-        for (const a of [0, Math.PI / 4]) props.push({ s: [R * 1.62, 0.3, R * 1.62], p: [cx, y - 0.15, cz], r: [0, a + q * 0.1, 0], c: sh(0x8a8478, 0.9 + q * 0.04) });
-      }
-      for (let i = 0; i < 26; i++) {                                                              // flagstone seams on top
-        const a = r.range(0, 6.28), d = Math.sqrt(r.range(0, 1)) * (PR0 - 1);
-        props.push({ s: [r.range(1.2, 2.4), 0.04, r.range(1.0, 2.0)], p: [cx + Math.sin(a) * d, gy + 0.02, cz + Math.cos(a) * d], r: [0, r.range(0, 3), 0], c: sh(0x9a9488, r.range(0.85, 1.08)) });
+      for (let i = 0; i < 40; i++) {                                                              // the curb round the flat top
+        const a = (i + 0.5) / 40 * Math.PI * 2, x = cx + Math.sin(a) * (PR0 + 0.3), z = cz + Math.cos(a) * (PR0 + 0.3);
+        if (Math.abs(x - cx) < 4.2) continue;                                                     // the north and south steps
+        props.push({ s: [PR0 * Math.PI * 2 / 40 + 0.1, 0.5, 0.7], p: [x, k.ground(x, z) + 0.05, z], r: [0, a + Math.PI / 2, 0], c: sh(0x6a665e, r.range(0.85, 1.05)) });
       }
       // the inner ring: wooden steps down the north face (Nữ Cận Vệ's post) and the south face (the hero's way in)
       for (const [dz, yaw] of [[PR0 + 0.6, 0], [-PR0 - 0.6, Math.PI]]) for (let s = 0; s < 4; s++) {

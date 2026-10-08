@@ -323,8 +323,8 @@ export function buildSet(root, k, def) {
       hallV += ((fz > DOOR_Z + 2 ? 1 : 0) - hallV) * Math.min(1, dt * 0.8);
       if (sc && (mornV > 0.001 || hallV > 0.001 || saved)) {
         if (!saved) { const hemi = sc.children.find((o) => o.isHemisphereLight); if (!hemi || !sc.fog) return; saved = { fog: sc.fog.color.clone(), hemi, hc: hemi.color.clone(), hi: hemi.intensity }; }
-        sc.fog.color.copy(saved.fog).lerp(MORNING_FOG, mornV * 0.45).lerp(HALL_FOG, hallV * 0.35);
-        saved.hemi.intensity = saved.hi * (1 + 0.18 * mornV) * (1 - 0.3 * hallV);
+        sc.fog.color.copy(saved.fog).lerp(MORNING_FOG, mornV * 0.45).lerp(HALL_FOG, hallV * 0.5);
+        saved.hemi.intensity = saved.hi * (1 + 0.18 * mornV) * (1 - 0.42 * hallV);
       }
     },
   };

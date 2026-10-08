@@ -21,7 +21,7 @@ export const HV = 0.013;
 export const C = {
   skin: 0xa2704c, skinD: 0x7a4e34, skinH: 0xb8845e, scalp: 0x8e7464, scalpD: 0x6a5850, lip: 0x5a2a20, mouth: 0x1c0a08, eye: 0x0c0806,
   scl: 0xd6cabc, hair: 0x121010, hairH: 0x2a2624,
-  arm: 0x5c5a34, armD: 0x3a3a20, armL: 0x76744a,                         // weathered green-brown lamellar
+  arm: 0x56622e, armD: 0x363e1c, armL: 0x707c44,                         // weathered green-brown lamellar
   brz: 0x86703c, brzD: 0x54461e, brzL: 0xae9454,                         // tarnished bronze lips
   green: 0x34502c, greenD: 0x22361c, greenL: 0x4a6a3a, fade: 0x5e7050,  // the cloak (fade: sun-bleached hem)
   lea: 0x5a3a22, leaD: 0x3a2414, leaL: 0x7a5434,                         // sash, baldric, bracers, cords
@@ -267,4 +267,4 @@ export const FACE = [
   'GGGAAAAAALAAAAAAAGGG',
 ];
 export const PAL = { K: '#121010', L: '#5a3a22', t: '#8e7464', S: '#a2704c', s: '#7a4e34', d: '#3a2418', W: '#d6cabc', E: '#0c0806',
-  n: '#b8845e', m: '#5a2a20', b: '#dcd2b8', G: '#34502c', g: '#22361c', A: '#5c5a34', a: '#86703c' };
+  n: '#b8845e', m: '#5a2a20', b: '#dcd2b8', G: '#34502c', g: '#22361c', A: '#56622e', a: '#86703c' };

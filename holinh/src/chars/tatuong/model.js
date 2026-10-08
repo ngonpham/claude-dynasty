@@ -4,7 +4,7 @@
 // steady eyes with deep crow's feet, a broad nose, a wide moustache, and a great full black beard that covers the jaw
 // to the ears and falls in five heavy points over the breastplate (chains). The hair is pulled up hard into a topknot
 // bound by a bronze crown-ring with a pin through it, black at the crown, the temples iron-grey. Heavy bronze-red
-// lamellar laced in bronze: a deep cuirass of wide rows, a broad bronze gorget round the neck, a leather harness whose
+// lamellar laced dark, its lips in bronze: a deep cuirass of wide rows, a broad bronze gorget round the neck, a leather harness whose
 // straps cross over the chest to a big bronze ring at the sternum; massive three-tier shoulders lipped in bronze with an
 // upturned bronze flange; dark-red sleeves, heavy bracers (bronze-red plates in three bands, bronze rims, a raised
 // ridge); a broad leather war-belt hung with square bronze plaques and a bronze buckle shaped as a drum face; bronze-red
@@ -21,7 +21,7 @@ export const HV = 0.013;
 export const C = {
   skin: 0xa86e4a, skinD: 0x7e4e32, skinH: 0xbe845c, lip: 0x5e2a20, mouth: 0x1e0a08, eye: 0x0c0808, iris: 0x2e1a10, scl: 0xdcd0c2,
   beard: 0x110e0e, beardH: 0x2c2422, grey: 0x7a7672,
-  arm: 0x8c3a22, armD: 0x5a2214, armL: 0xae5232,                         // bronze-red lamellar
+  arm: 0x922e1c, armD: 0x5c1a10, armL: 0xb0442a,                         // bronze-red lamellar
   bronze: 0xb07a3a, bronzeD: 0x6a4420, bronzeL: 0xd8a85a,
   red: 0x9a1e1a, redD: 0x64100e, redL: 0xc0342a,                        // the cloak, cords, tassel
   robe: 0x4a1a14, robeD: 0x2e0e0a, robeL: 0x62261c,                     // dark-red sleeves, skirt, trousers
@@ -31,8 +31,8 @@ export const C = {
 const robe = (x, y, z) => (md(x * 2 + y + z * 3, 11) === 0 ? C.robeL : md(x - y * 2 + z, 9) === 0 ? C.robeD : C.robe);
 const cloth = (x, y, z) => (md(x * 2 + y + z * 3, 11) === 0 ? C.redL : md(x - y * 2 + z, 9) === 0 ? C.redD : C.red);
 const beardP = (x, y, z) => (md(x * 3 + y + z, 5) === 0 ? C.beardH : C.beard);
-/** Bronze lacing: a cord down every 5th column of a lamellar volume, bright where it crosses a lip. */
-const laced = (a, b, rowH) => P(a, b, (x, y) => (md(x, 5) === 2 ? (md(y - a[1], rowH) === 0 ? C.bronzeL : C.bronzeD) : null));
+/** Dark lacing: a cord down every 5th column of a lamellar volume, bronze where it crosses a lip. */
+const laced = (a, b, rowH) => P(a, b, (x, y) => (md(x, 5) === 2 ? (md(y - a[1], rowH) === 0 ? C.bronzeD : C.armD) : null));
 const armour = (a, b, o) => [...lamellar(a, b, { base: C.arm, ...o }), laced(a, b, o.rowH)];
 
 // ---------------------------------------------------------------- body (FV, centred on the joints)
