@@ -16,6 +16,12 @@
   <a href="#run">Run locally</a>
 </p>
 
+> **New: 十二使君 · Thập Nhị Sứ Quân** — a second game on the same engine, set in Vietnam's Anarchy of the Twelve Warlords
+> (944–968): Đinh Bộ Lĩnh of Hoa Lư and his captains bring the warlords down one by one. Fully Vietnamese UI with
+> English subtitles, its own officers, armies, fields, chapters and trials, built as an overlay of this engine (an
+> importmap swaps the content modules; the original game is untouched). Locally:
+> [localhost:8000/suquan/](http://localhost:8000/suquan/) · read [suquan/README.md](suquan/README.md) (tiếng Việt).
+
 <p align="center"><b>7 officers</b> &nbsp; / &nbsp; <b>4 chapters</b> &nbsp; / &nbsp; <b>3 trials</b> &nbsp; / &nbsp; <b>4 difficulties</b></p>
 
 <p align="center">
@@ -207,6 +213,14 @@ Examples:
 
 These shortcuts bypass menu unlock and roster restrictions and use the saved difficulty. For trial shortcuts, always specify a trial ID with `ch`.
 
+The same parameters work for **十二使君 · Thập Nhị Sứ Quân** under `/suquan/` (officers `dinhbolinh`, `nguyenbac`, `lehoan`,
+`dinhlien`, `phambachho`, `khuongviet`, `docanhthac`; chapters `hoalu`, `tayphuliet`, `dodong`, `phongchau`; trials
+`thiennhan`, `tuthu`, `binhsu`):
+
+- [Đinh Bộ Lĩnh at Hoa Lư](http://localhost:8000/suquan/?go=story&char=dinhbolinh&ch=hoalu)
+- [Đinh Liễn in Thiên Nhân Trảm](http://localhost:8000/suquan/?go=trial&char=dinhlien&ch=thiennhan)
+- [Nguyễn Bặc free battle at Hoa Lư](http://localhost:8000/suquan/?go=free&char=nguyenbac&map=hoalu&enemies=300)
+
 </details>
 
 <details>
@@ -262,5 +276,6 @@ These scripts cover simulation and source contracts; they do not verify browser 
 - Code: MIT, see [LICENSE](LICENSE).
 - [three.js](https://threejs.org/): MIT.
 - HUD fallback font `src/ui/brush.woff2` is a subset of Yuji Boku by Kinuta Font Factory, licensed under the SIL Open Font License 1.1.
+- 十二使君 fonts in `suquan/fonts/` (Playfair Display, Alegreya, Be Vietnam Pro, a Yuji Boku subset): SIL Open Font License 1.1, see [suquan/fonts/OFL.txt](suquan/fonts/OFL.txt).
 
 This is a fan project, not affiliated with or endorsed by KOEI TECMO. "Dynasty Warriors" is a trademark of KOEI TECMO. No game assets from the original games are included.

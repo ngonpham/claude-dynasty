@@ -8,6 +8,7 @@
 <!-- Overlay importmap: the engine (../src) runs unchanged; every content / UI module listed here is swapped for this game's
      version under ./src (same path, same exports). "engine/…" reaches an ORIGINAL engine module on purpose (an overlay
      that extends the one it replaces); never import an overlaid path through it from anywhere else. -->
+<link rel="stylesheet" href="./fonts/fonts.css">
 <script type="importmap">
 { "imports": {
     "three": "../vendor/three/three.module.js",
@@ -21,7 +22,13 @@
     "../src/story/trials.js": "./src/story/trials.js",
     "../src/core/progress.js": "./src/core/progress.js",
     "../src/core/difficulty.js": "./src/core/difficulty.js",
-    "../src/ui/title.js": "./src/ui/title.js"
+    "../src/ui/title.js": "./src/ui/title.js",
+    "../src/ui/select.js": "./src/ui/select.js",
+    "../src/ui/loading.js": "./src/ui/loading.js",
+    "../src/ui/hud.js": "./src/ui/hud.js",
+    "../src/story/prologue.js": "./src/story/prologue.js",
+    "../src/story/result.js": "./src/story/result.js",
+    "../src/musou/overlay.js": "./src/musou/overlay.js"
 } }
 </script>
 <style>
@@ -30,11 +37,15 @@
 
   /* ---- HUD (owned by the hud part). DW8 layout, concept calligraphy. 1rem = 1/72 viewport height (10 px @720p). ---- */
   html { font-size: calc(100vh / 72); }
-  :root { --brush: "Xingkai SC", "STXingkai", "HudBrush", serif; --kai: "Kaiti SC", "STKaiti", "KaiTi", "HudBrush", serif;
-    --sans: "Avenir Next", "Helvetica Neue", sans-serif; }
-  /* Portable brush fallback for machines without the macOS Xingkai/Kaiti assets: Yuji Boku (SIL OFL 1.1, Kinuta Font
-     Factory), subset to the HUD's glyphs (src/ui/brush.woff2). Only fetched when the fonts before it are missing.
-     When you add HUD text with new CJK characters, re-subset (Google Fonts css2?family=Yuji+Boku&text=...). */
+  /* Type (fonts/fonts.css, SIL OFL 1.1): --brush headlines = Playfair Display (Vietnamese with full diacritics), its Hán
+     falling to the brush stack; --kai body = Alegreya; --sans small print = Be Vietnam Pro; --han = brush Hán only (seals,
+     Musou copy, prologue columns, banner glyphs): SQHan = Yuji Boku subset to every Hán this game shows
+     (fonts/subset.py), then the engine's HudBrush and the macOS brush faces. */
+  :root { --han: "SQHan", "HudBrush", "Xingkai SC", "STXingkai", serif;
+    --brush: "Playfair Display", "SQHan", "HudBrush", "Xingkai SC", "STXingkai", serif;
+    --kai: "Alegreya", "SQHan", "HudBrush", "Kaiti SC", "STKaiti", "KaiTi", serif;
+    --sans: "Be Vietnam Pro", "Avenir Next", "Helvetica Neue", sans-serif; }
+  /* the engine's brush subset (Yuji Boku, src/ui/brush.woff2): fallback for any Hán glyph SQHan lacks */
   @font-face { font-family: "HudBrush"; src: url(../src/ui/brush.woff2) format("woff2"); font-display: swap; }
   #hud { position: fixed; inset: 0; pointer-events: none; color: #f4ead8; user-select: none; overflow: hidden;
     --gold: #f2c14e; --teal: #3fb8b0; --seal: #b3261e;
@@ -929,6 +940,242 @@
   #result .rs-btns button:hover, #result .rs-btns button:focus-visible { filter: brightness(1.12); outline: .2rem solid #ffe7a3; outline-offset: .35rem; }
   @keyframes rsIn { from { opacity: 0; transform: translateX(-2rem); } }
   @keyframes rsStamp { from { opacity: 0; transform: scale(1.7) rotate(-6deg); } }
+
+  /* =====================================================================================================================
+     十二使君 skin (ui lane): Vietnamese type over the engine's ink / brocade look. The rules above are the engine's layout;
+     everything below re-sizes it for Latin text with diacritics (longer than Hán, taller stacks: line-heights ≥ 1.15,
+     letter-spacing in em, no vertical writing for Latin) and adds the Vietnamese flavour: red lacquer + gold leaf, the
+     bronze-drum sun ring (--drum: the 14-ray star and tick rings of a Đông Sơn drum face) behind seals and stamps.
+     ===================================================================================================================== */
+  :root { --lacquer: #8e1a14; --lacquer-d: #4e0d09; --bronze: #c8913a;
+    --drum: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200' fill='none' stroke='%23d9a53a'><circle r='97' stroke-width='1.4'/><circle r='91' stroke-width='.7'/><circle r='84' stroke-width='6' stroke-dasharray='1.4 3.6'/><circle r='76' stroke-width='.7'/><circle r='70' stroke-width='.7'/><circle r='63' stroke-width='4' stroke-dasharray='7 3'/><circle r='55' stroke-width='.7'/><circle r='49' stroke-width='3' stroke-dasharray='1 2.6'/><circle r='43' stroke-width='.7'/><path fill='%23d9a53a' stroke='none' d='M0.0 -40.0L2.7 -11.7L17.4 -36.0L7.5 -9.4L31.3 -24.9L10.8 -5.2L39.0 -8.9L12.0 0.0L39.0 8.9L10.8 5.2L31.3 24.9L7.5 9.4L17.4 36.0L2.7 11.7L0.0 40.0L-2.7 11.7L-17.4 36.0L-7.5 9.4L-31.3 24.9L-10.8 5.2L-39.0 8.9L-12.0 0.0L-39.0 -8.9L-10.8 -5.2L-31.3 -24.9L-7.5 -9.4L-17.4 -36.0L-2.7 -11.7Z'/></svg>"); }
+  .scr small, #menu small { font-family: var(--sans); }
+  .ink-wait i { font-family: var(--han); }
+  .ink-wait::before { content: ""; position: absolute; inset: 1.5rem; background: var(--drum) center / contain no-repeat; opacity: .28; }
+
+  /* ---- title: the logo (十二使君 seal on a drum ring + two gold-leaf lines), menu, tags */
+  .t-logo { padding-left: 11rem; }
+  .t-logo::before { content: ""; position: absolute; left: -4.2rem; top: -3rem; width: 20rem; height: 20rem; z-index: -1; pointer-events: none;
+    background: var(--drum) center / contain no-repeat; opacity: .3; filter: drop-shadow(0 0 1.2rem rgba(242,193,78,.35)); }
+  #title.in .t-logo::before { animation: drumIn 1.6s cubic-bezier(.2,0,.2,1) .2s both; }
+  @keyframes drumIn { from { opacity: 0; transform: rotate(-40deg) scale(.85); } }
+  .t-seal { left: 0; top: 1.2rem; --sz: 3.8rem; --lh: 1.08; --pad: .75rem .65rem; --rad: .5rem; --r1: .3rem; --r2: .52rem;
+    font-family: var(--han); height: 8.3rem; letter-spacing: .1rem; }
+  .t-logo h1 { margin: 0; font: 900 8.4rem/.98 var(--brush); letter-spacing: .015em; white-space: nowrap; }
+  .t-logo h1::before { white-space: pre; -webkit-text-stroke: .9rem #150903; }
+  .t-logo h1 span { display: inline-block; padding-bottom: .12em; }   /* the gold clip keeps the ụ / ậ dots */
+  .t-en { margin: 1.1rem 0 0 .2rem; font: 700 max(13px, 1.5rem)/1 var(--sans); letter-spacing: .26em; gap: 1rem; }
+  .t-en::before { content: ""; width: 3rem; height: .14rem; background: linear-gradient(90deg, transparent, #f2c14e); }
+  .t-press { top: 33rem; }
+  .t-press b { font: 700 4.2rem/1.15 var(--brush); letter-spacing: .04em; }
+  .t-press::before { top: 6.4rem; }
+  .t-menu { margin-top: 3rem; }
+  .t-menu b { font-weight: 700; letter-spacing: .02em; line-height: 1.12; }
+  .t-main b { font-size: 3.8rem; }
+  #title .t-main button { padding: .3rem 0 .9rem 4rem; }
+  .t-menu small { letter-spacing: .08em; }
+  .t-ctl p small { display: block; margin-top: .3rem; color: #a99a7c; }
+  .t-ctl th { font: 700 1.9rem/1.1 var(--kai); padding: .45rem 2.4rem .45rem 0; }
+  .t-ctl th small { display: block; margin: .2rem 0 0; font-size: max(11px, 1.1rem); }
+  .t-ctl td { padding: .45rem 1.6rem .45rem 0; }
+  .t-ctl table { font-size: max(13px, 1.45rem); }
+  .t-ctl p { margin-top: 1.2rem; }
+  :is(.t-ctl, .t-rec) { padding: 2rem 3rem 1.6rem; max-height: calc(100vh - 13rem); }
+  /* name tags: horizontal now (Latin is never written vertically) — seal, name, title */
+  .t-tag { flex-direction: row; align-items: flex-start; gap: .9rem; }
+  .t-tag b { display: block; writing-mode: horizontal-tb; font: 700 3.4rem/1.15 var(--brush); letter-spacing: .02em; white-space: nowrap; }
+  .t-tag small { display: inline-block; width: auto; margin-top: .4rem; white-space: nowrap; letter-spacing: .12em; text-transform: uppercase; }
+  .t-tag i { margin-top: .5rem; }
+  /* chapter / difficulty panels */
+  #title :is(.t-dif, .t-chs) b { font-size: 3rem; }
+  #title .t-chs button { padding: .3rem 0 .7rem 4rem; }
+  .t-chs b em { display: block; margin: 0 0 .25rem; font: 700 1.3rem/1 var(--sans); letter-spacing: .22em; text-transform: uppercase; }
+  .t-chs button::before { top: 2.6rem; }
+  #title:is(.chp, .dif) .t-tag { opacity: 0; }   /* a panel beside the menu: the tags would be pushed onto the bodies */
+  .t-lk { font: 700 1.1rem/1 var(--sans); letter-spacing: .06em; padding: .3rem .45rem; vertical-align: .9rem; }
+  .t-rk { font-family: var(--brush); line-height: 2.5rem; }
+  .t-ccard { width: 34rem; }
+  .t-cname b { font-size: 4.6rem; letter-spacing: .01em; line-height: 1.1; white-space: normal; }
+  .t-cname i { font-family: var(--han); }
+  .t-cera { font: 700 1.9rem/1.2 var(--kai); letter-spacing: .02em; }
+  .t-cline b { font: 500 1.9rem/1.4 var(--kai); }
+  .t-cfoot { gap: .8rem 1.1rem; }
+  .t-cfoot em { font: 700 1.6rem/1.1 var(--kai); }
+  .t-cfoot span { font: 700 1.5rem/1.2 var(--kai); }
+  .t-dline b { font: 700 2.2rem/1.3 var(--kai); }
+  .t-dcard { width: 30rem; }
+  .t-dcard .t-dbars li { grid-template-columns: 11rem 1fr; }
+  .t-dcard .t-dbars b { font: 700 1.9rem/1.1 var(--kai); }
+  :is(.t-dcard, .t-ccard) h3 { font: 700 1.7rem/1 var(--kai); letter-spacing: .08em; text-transform: uppercase; }
+  /* records wall */
+  .t-rec th { font: 700 2rem/1.1 var(--brush); letter-spacing: .01em; }
+  .t-rec th small { display: block; margin: .3rem 0 0; font: 600 1.1rem/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; }
+  .t-rec td { width: 8.4rem; padding: .3rem 0; }
+  .t-rec td canvas { width: 3.4rem; height: 3.4rem; margin-bottom: .35rem; }
+  .t-rec th { padding: .3rem 2rem .3rem 0; }
+  .t-rbody { gap: 1.2rem 3rem; }
+  .t-rec ul { width: 100%; box-sizing: border-box; grid-template-columns: 1fr 1fr; gap: 1rem 2.4rem; padding: 1.2rem 0 0;
+    border-left: 0; border-top: .1rem solid rgba(214,170,90,.3); }
+  .t-rec td > b { display: block; font: 700 1.35rem/1.15 var(--kai); padding: 0 .3rem; }
+  .t-rec h2 em small { margin-left: .6rem; }
+  .t-rec li i { font: 700 1.1rem/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
+  .t-rec li b { font-size: 1.8rem; }
+  .t-rec li span { font: 600 1.35rem/1.3 var(--kai); }
+  :is(.t-ctl, .t-rec) h2 { font: 700 3.4rem/1.1 var(--brush); letter-spacing: .02em; }
+  #title .ui-foot { left: 40%; gap: 2.6rem; font: 700 max(14px, 1.6rem)/1 var(--kai); }
+  .ui-foot { font: 700 1.6rem/1 var(--kai); }
+  .ui-foot span { white-space: nowrap; }
+  @media (max-aspect-ratio: 4/3) {
+    .t-logo { padding-left: 9.6rem; }
+    .t-logo::before { width: 17rem; height: 17rem; left: -3.6rem; }
+    .t-seal { --sz: 3.2rem; height: 7rem; }
+    .t-logo h1 { font-size: 7.2rem; }
+    .t-main b { font-size: 3.3rem; }
+    .t-rec td { width: 6.6rem; }
+    .t-rec td > b { font-size: 1.15rem; }
+  }
+
+  /* ---- HUD: Vietnamese names and labels (Playfair for names, Alegreya for lines), Hán only on seals / copy / glyphs */
+  #hud .h-intro .zh { font: 900 6.6rem/1.12 var(--brush); letter-spacing: .01em; }
+  #hud .h-intro .en { font: 700 max(13px, 1.35rem)/1 var(--sans); letter-spacing: .3em; }
+  #hud .h-intro .en .hn { margin-right: 1.2rem; font: 400 2.4rem/1 var(--han); letter-spacing: .2rem; vertical-align: -.35rem; color: #ffd8a0; }
+  #hud .h-intro .sub { font: 500 max(15px, 1.7rem)/1.3 var(--kai); letter-spacing: .03em; }
+  #hud .h-intro .keys { font-size: max(13px, 1.25rem); }
+  #hud .name { font: 900 3.4rem/1.1 var(--brush); letter-spacing: .01em; bottom: 8.6rem; }
+  #hud .num b, #hud .num u { font-family: var(--brush); font-weight: 900; }
+  #hud .h-mile b { font-weight: 900; }
+  #hud small em { font: 700 2rem/1 var(--brush); letter-spacing: .02em; }
+  #hud .mu span { top: -.5rem; font: 900 2.2rem/1 var(--brush); letter-spacing: .02em; }
+  #hud .h-band p { font: 700 2.5rem/1.25 var(--kai); letter-spacing: .03em; }
+  #hud .h-band.lo p { font-size: 2.1rem; }
+  #hud .h-band.big p { font: 900 4.4rem/1.2 var(--brush); letter-spacing: .02em; }
+  #hud .h-band.lo { left: 20%; right: 20%; }
+  #hud .h-dlg b { font: 700 2.2rem/1.15 var(--brush); }
+  #hud .h-dlg b span:empty { display: none; }
+  #hud .h-dlg p { font: 700 2.2rem/1.25 var(--kai); letter-spacing: .01em; }
+  #hud .h-dlg small { font-size: 1.45rem; }
+  #hud .h-dlg .dseal { font-family: var(--han); }
+  #hud .h-copy { font-family: var(--han); font-weight: 400; }
+  #hud .h-obj { font: 700 1.9rem/1.25 var(--kai); }
+  #hud .h-obj .tm i { font: 700 1.15rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; vertical-align: .45rem; }
+  #hud .h-obj .tm b { font: 900 2.3rem/1 var(--brush); }
+  #hud .h-def b { font: 700 2rem/1.15 var(--brush); }
+  #hud .h-target b { font: 700 2.5rem/1.15 var(--brush); letter-spacing: .01em; }
+  #hud .h-target strong { font: 900 3rem/1 var(--brush); white-space: nowrap; left: 22rem; }
+  #hud .h-boss b { font: 900 3rem/1.12 var(--brush); letter-spacing: .01em; }
+  #hud .off b { font: 700 2.1rem/1.1 var(--brush); bottom: 2.7rem; white-space: nowrap; }
+  #hud .off span { font: 700 1.1rem/1 var(--sans); letter-spacing: .14em; }
+  #hud .morale span { font-family: var(--han); font-weight: 400; font-size: 1.7rem; top: -.7rem; }
+  #hud .h-map .seal { writing-mode: horizontal-tb; font: 700 1.25rem/1 var(--brush); padding: .35rem .6rem; letter-spacing: .02em; }
+  :is(#hud .h-intro, #hud .h-boss, #hud .h-target, #hud .h-def) .seal { font-family: var(--han); font-weight: 400; }
+  /* pause menu */
+  #menu { padding-left: 7vw; }
+  #menu .t { font: 900 6.2rem/1.1 var(--brush); letter-spacing: .01em; white-space: nowrap; }
+  #menu table { right: 4rem; }
+  #menu .t i { font-family: var(--han); font-weight: 400; vertical-align: 1.2rem; --sz: 2rem; }
+  #menu .en { font: 700 1.6rem/1 var(--sans); letter-spacing: .5em; }
+  #menu .sub { font: 700 2.4rem/1.2 var(--kai); letter-spacing: .04em; }
+  #menu button { font: 700 3.6rem/1.15 var(--brush); letter-spacing: .02em; }
+  #menu td:first-child { font: 700 1.9rem/1.15 var(--kai); }
+  #menu td:first-child small { display: block; margin: .3rem 0 0; }
+  #menu td { padding: .5rem 1.2rem; }
+  #menu table { font-size: 1.35rem; }
+  #menu td:nth-child(2) { max-width: 32rem; }
+
+  /* ---- select */
+  .s-head h2 { font: 900 4.2rem/1.1 var(--brush); letter-spacing: .01em; }
+  .s-mode { font: 700 1.8rem/1.15 var(--kai); }
+  .s-fac i { font-family: var(--han); font-weight: 400; font-size: 3.2rem; }
+  .s-fac small b { display: block; margin-bottom: .3rem; font: 700 2rem/1.1 var(--kai); letter-spacing: .02em; color: var(--paper); }
+  .s-card b { font: 700 2.2rem/1.15 var(--brush); letter-spacing: .01em; }
+  .s-card small { letter-spacing: .02em; overflow: hidden; text-overflow: ellipsis; max-width: 15rem; }
+  .s-card > i { font-family: var(--han); }
+  .s-card.lock .t-rk { width: auto; padding: 0 .55rem; border-radius: .3rem; font: 700 1.05rem/2.2rem var(--sans); height: 2.2rem; letter-spacing: .06em; }
+  .s-info { top: 16.4rem; max-height: calc(100% - 31.6rem); }   /* ends above the action buttons */
+  .s-name { display: block; }
+  .s-name h1 { font: 900 7rem/1.15 var(--brush); letter-spacing: .01em; }
+  .s-name div { padding-top: .4rem; align-items: center; }
+  .s-seal { font-family: var(--han); font-weight: 400; }
+  .s-court { writing-mode: horizontal-tb; font: 700 2rem/1.2 var(--kai); letter-spacing: .02em; }
+  .s-court b { font: 400 2.6rem/1 var(--han); letter-spacing: .2rem; color: #ffe3a0; vertical-align: -.2rem; }
+  .s-en:empty { display: none; }
+  .s-epi b { font: 700 2.4rem/1.2 var(--brush); letter-spacing: .01em; }
+  .s-wpn b { font: 700 2rem/1.2 var(--kai); }
+  .s-wpn span, .s-rec span { font: 700 1.15rem/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
+  .s-bio span { font: 500 1.65rem/1.4 var(--kai); }
+  .s-stats b { font: 700 2.1rem/1.1 var(--kai); }
+  .s-stats li { grid-template-columns: 6rem 1fr; }
+  .s-musou span { font: 700 1.3rem/1 var(--sans); letter-spacing: .3em; text-transform: uppercase; }
+  .s-musou b { font: 900 3.2rem/1.15 var(--brush); letter-spacing: .01em; }
+  .s-rec b { font: 700 1.9rem/1.2 var(--kai); }
+  /* the intro line: a horizontal quote over the officer's shoulder (it was vertical calligraphy) */
+  .s-line { top: auto; bottom: 16rem; right: 6rem; max-width: 36rem; display: block; padding: 1.2rem 1.8rem 1.3rem; text-align: right;
+    background: linear-gradient(270deg, rgba(10,6,4,.78), rgba(10,6,4,.55)); box-shadow: none; border-radius: 0; border-right: .3rem solid var(--acc); }
+  .s-line p { writing-mode: horizontal-tb; max-height: none; padding: 0; border: 0; font: 700 italic 2.2rem/1.3 var(--kai); letter-spacing: .01em; }
+  .s-line p::before { content: "« "; color: var(--acc); } .s-line p::after { content: " »"; color: var(--acc); }
+  .s-line small { writing-mode: horizontal-tb; max-height: none; padding-top: .6rem; display: block; }
+  #select.swap .s-line p { animation-name: swapIn; }
+  .s-act b { font: 700 2.4rem/1.1 var(--brush); letter-spacing: .02em; }
+  #select .s-go b { font-size: 3rem; }
+  @media (max-aspect-ratio: 4/3) {
+    .s-line { max-width: 28rem; right: 3rem; bottom: 22rem; }
+    .s-line p { font-size: 2rem; }
+    .s-info { top: 20rem; max-height: calc(100% - 35rem); }
+  }
+
+  /* ---- loading card */
+  .l-ch { font: 700 2.1rem/1.15 var(--kai); }
+  .l-name h1 { font: 900 min(9rem, calc(100rem / var(--n, 8)))/1.15 var(--brush); letter-spacing: .01em; white-space: nowrap; }
+  .l-seal { font-family: var(--han); font-weight: 400; }
+  .l-en { font: 700 2.4rem/1.2 var(--kai); letter-spacing: .02em; color: #f2c14e; }
+  .l-en b { margin-right: 1.2rem; font: 400 3rem/1 var(--han); letter-spacing: .3rem; color: #ffe3a0; vertical-align: -.2rem; }
+  .l-en small { display: inline; margin-left: 1rem; font: 600 max(13px, 1.3rem)/1 var(--sans); letter-spacing: .1em; color: #dccdb0; }
+  .l-line b { font: 700 italic 2.8rem/1.3 var(--kai); letter-spacing: .01em; }
+  .l-tip { grid-template-rows: auto auto auto; row-gap: .3rem; }
+  .l-tip span { grid-row: 1 / 4; align-self: center; height: calc(var(--sz) * 2.2); font-family: var(--han); font-weight: 400; }
+  .l-tip em { font: 700 1.15rem/1 var(--sans); font-style: normal; letter-spacing: .3em; text-transform: uppercase; color: #f2c14e; }
+  .l-tip b { font: 500 2.1rem/1.35 var(--kai); letter-spacing: .01em; }
+  .l-state b { font: 700 2.6rem/1.15 var(--brush); letter-spacing: .02em; }
+  .l-foot { grid-template-columns: 1fr 44rem; gap: 4rem; }
+  .l-state small { white-space: nowrap; }
+
+  /* ---- prologue: Hán columns + the Vietnamese prose (vi) large, the English small */
+  #prologue .pl-card { bottom: 36vh; }
+  #prologue .pl-cols { font: 400 4.4rem/1.25 var(--han); letter-spacing: .5rem; }
+  #prologue .pl-en { right: 3vw; bottom: 8vh; max-width: min(68rem, 64vw); font: inherit; letter-spacing: 0; padding: 2rem 3vw 2rem 8rem;
+    background: radial-gradient(closest-side at 55% 50%, rgba(226,206,166,.94) 62%, rgba(226,206,166,0)); }
+  #prologue .pl-vi { margin: 0; font: 600 2.7rem/1.4 var(--kai); color: #24160b; text-wrap: balance; }
+  #prologue .pl-en small { display: block; margin-top: .8rem; font: italic 500 1.55rem/1.4 var(--kai); letter-spacing: .01em; color: #4a3020; }
+  #prologue .pl-pips { font-family: var(--han); font-weight: 400; }
+  #prologue .pl-labels text { font-family: var(--brush); }
+  #prologue .pl-stamp small { font: 700 2.8rem/1 var(--sans); letter-spacing: .5em; margin-right: -.5em; text-transform: uppercase; }
+  #prologue .pl-st { display: flex; align-items: center; gap: 3rem; margin: 1.4rem 0 1.8rem; }
+  #prologue .pl-stamp b { margin: 0; font: 900 min(15rem, calc(116vw / var(--n, 6)))/1.15 var(--brush); letter-spacing: .01em; white-space: nowrap; }
+  #prologue .pl-stamp i { position: relative; left: auto; top: auto; height: auto; font-family: var(--han); font-weight: 400; --sz: 3.6rem; }
+  #prologue .pl-stamp::after { content: ""; position: absolute; left: 50%; top: 50%; width: 60rem; height: 60rem; margin: -30rem 0 0 -30rem; z-index: -1;
+    background: var(--drum) center / contain no-repeat; opacity: 0; filter: sepia(1) brightness(.4); }
+  #prologue.stamped .pl-stamp::after { opacity: .22; transition: opacity 1.2s .3s; }
+  #prologue .pl-skip { font: 700 max(15px, 1.8rem)/1 var(--kai); }
+
+  /* ---- result */
+  #result .rs-head small { letter-spacing: .25em; }
+  #result .rs-head small b { display: block; margin-bottom: .4rem; font: 700 1.9rem/1.1 var(--kai); letter-spacing: .03em; color: #efe3cf; }
+  #result .rs-head h2 { font: 900 7.6rem/1.12 var(--brush); letter-spacing: .02em; }
+  #result .rs-head em { letter-spacing: .8em; }
+  #result .rs-stats th { font: 700 2.1rem/1.15 var(--kai); }
+  #result .rs-stats th small { display: block; margin: .3rem 0 0; }
+  #result .rs-stats td { font: 900 3rem/1 var(--brush); }
+  #result .rs-new b { font: 700 1.3rem/1.1 var(--sans); letter-spacing: .04em; white-space: nowrap; }
+  #result .rs-rank { position: relative; }
+  #result .rs-rank::before { content: ""; position: absolute; left: 50%; top: 58%; width: 24rem; height: 24rem; margin: -12rem 0 0 -12rem; z-index: -1;
+    background: var(--drum) center / contain no-repeat; opacity: .35; }
+  #result .rs-rank span { font: 700 2rem/1.1 var(--kai); }
+  #result .rs-rank b { font: 900 9.6rem/1 var(--brush); }
+  #result .rs-rank em { font: 700 1.4rem/1.2 var(--kai); white-space: nowrap; }
+  #result .rs-dif { font: 700 1.7rem/1.1 var(--kai); }
+  #result .rs-unlock { font: 700 2rem/1.25 var(--kai); letter-spacing: .02em; }
+  #result .rs-epi p { font: 500 1.9rem/1.45 var(--kai); }
+  #result .rs-btns button { font: 700 2.6rem/1.1 var(--brush); letter-spacing: .02em; }
 
   /* reduced motion: every CSS animation / transition lands at once; the ink-wait ring stands still, the prologue doesn't lift */
   @media (prefers-reduced-motion: reduce) {
