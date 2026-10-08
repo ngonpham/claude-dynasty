@@ -1,27 +1,19 @@
-// Title screen (#title, ui lane). DW-style key art over the live battlefield: Zhao Yun in front (spear planted, free fist
-// thrown up) and Huang Zhong half a metre behind and to the right, drawing toward the lens-right and looking into it, on
-// their real voxel models (kit.model on their own rigs, cloth/hair chains), backlit by the low sun up the pass with the
-// burning Wei camp, smoke over the right cliff, their 趙 / 黃 standards and rising embers behind them in deep bokeh, low
-// sunlit haze over the ground under the menu; a slow push-in on enter (from farther back), then a breathing drift
-// (+ a little mouse parallax). The lens is fitted every frame to the pair's posed bounds, so both stay whole in the
-// column right of the logo/menu band at any window shape (16:9, ultrawide, 4:3).
-// Render-only: view(scene, camera, focus, dt) runs after the gameplay camera rig while this screen is up (main.js header).
-// 2D: ink scrim band on the left carrying the logo (三國 seal + gold-leaf 無雙 + VOXEL MUSOU) and the menu, brush name
-// tags projected beside each officer's head (hidden at ≤ 4:3), key/pad prompts along the bottom. First boot shows a
-// "press any key" card (also unlocks audio); returns go straight to the menu.
-// Menu: 劇情模式 → the chapter panel in place of the menu (the four chapters in campaign order, story/chapters.js: a
-// locked one shows 鎖, a cleared one its best rank; beside them a card: number, title + seal, era, the prologue's
-// opening lines or the unlock rule, the chapter's officers each with his own best rank). 演武試煉 → the same panel as the
-// trial list (story/trials.js TRIALS: the card shows the rule, the field and the best record; a trial the records have
-// not opened yet shows 鎖 + its rule, core/progress.js) with 自由演武 as its last entry → the panel again as the
-// battlefield list (every chapter's field, all open, no records). A pick → the difficulty panel (初級 普通 上級 修羅,
-// each with the best rank won on it for that pick, + a card: the tier's line and 敵勢 / 敵將 / 傷害 pips; 修羅 shows its
-// unlock rule while locked), confirm → select {mode, ch, map}. Esc steps back one panel at a time.
-// 戰績 → the records wall (every chapter and trial × every officer: best rank and a pip per tier cleared, the count
-// cleared, what is still locked and how to open it) · 操作說明 → controls panel (both: Esc back).
-// Mouse: hover highlights an item, click activates it.
-// Screen contract: createTitle(el, flow) → { enter(ctx), exit(), view } (src/main.js header). ctx.ch (result 繼續 after
-// a win, with ctx.mode): open straight on that mode's panel, focused on that chapter / trial.
+// Title screen of 十二使君 · Thập Nhị Sứ Quân (#title, ui lane) — overlay of src/ui/title.js: the same exports (SWASH,
+// CONTROLS, STAGE, createTitle; + standardGlyph / same for the other screens), the same flow, panels and key-art machinery
+// (read that header: the lens fitted every frame to the pair's posed bounds, the push-in, embers, glows, smoke), every
+// visible string Vietnamese with the English as the small subtitle (suquan/DESIGN.md §2).
+// Key art on the HOME field (hoalu, its def.stage.title point): Đinh Bộ Lĩnh in front (the reed-banner spear planted,
+// the free fist thrown up: the spear kit's 'mu_act' frame) and his son Đinh Liễn half a metre behind, drawing his bow
+// ('aim'); behind each the Hán standard of his house (丁, standardGlyph) and beside each head a name tag (red seal,
+// Vietnamese name, title).
+// 2D: ink scrim band on the left with the logo (the 十二使君 red seal on a bronze-drum sun ring, the gold-leaf title «Thập
+// Nhị Sứ Quân», LOẠN 12 SỨ QUÂN · 944–968) and the menu: Chiến dịch → the chapter panel (the four chapters, a card with
+// the era, the prologue's opening in Vietnamese prose, the officers and their best ranks; a locked one: what opens it) ·
+// Thử thách → the same panel as the trial list, Tự do chiến last → the battlefield list · a pick → the difficulty panel
+// (Tân Binh · Bình Thường · Hiểm · Tu La with Thế giặc / Tướng giặc / Sát thương pips) → select { mode, ch, map } ·
+// Chiến tích → the records wall · Điều khiển → the controls panel. Esc steps back one panel at a time.
+// Screen contract: createTitle(el, flow) → { enter(ctx), exit(), view } (src/main.js header). ctx.ch (the result's
+// Tiếp tục after a win, with ctx.mode): open straight on that mode's panel, focused on that chapter / trial.
 import * as THREE from 'three';
 import { CHARS, CHAR_ORDER, paintPortrait } from '../../../src/chars/index.js';
 import { sampleClip, POSE_SIZE, CH } from '../../../src/hero/rig.js';
@@ -39,29 +31,36 @@ export const SWASH = `<svg class="swash" viewBox="0 0 400 26" preserveAspectRati
   S352 11 397 5L395 9C368 15 330 17 280 18C226 19 170 17 128 19C84 21 38 22 3 15ZM300 20C330 19 360 17 384 14L382 16C356 20 326 22 300 20Z"/></svg>`;
 
 const ITEMS = [
-  { go: 'story', zh: '劇情模式', en: 'Story · the Shu campaign' },
-  { go: 'trial', zh: '演武試煉', en: 'Trials · free battle' },
-  { go: 'rec', zh: '戰績', en: 'Records' },
-  { go: 'ctl', zh: '操作說明', en: 'Controls' },
+  { go: 'story', zh: 'Chiến dịch', en: 'Story · the unification campaign' },
+  { go: 'trial', zh: 'Thử thách', en: 'Trials · free battle' },
+  { go: 'rec', zh: 'Chiến tích', en: 'Records' },
+  { go: 'ctl', zh: 'Điều khiển', en: 'Controls' },
 ];
 // the trial panel's last entry: not a trial (no records, no map of its own) — picking it opens the battlefield list
-const FREE = { CH: { id: 'free', num: { zh: '無盡', en: 'ENDLESS' }, title: { zh: '自由演武', en: 'Free Battle' }, seal: '無盡',
-  rule: { zh: '任選武將與戰場，無盡鏖戰，不計戰績', en: 'Any officer, any field, endless waves. No records kept.' } } };
+const FREE = { CH: { id: 'free', num: { zh: 'Vô tận', en: 'ENDLESS' }, title: { zh: 'Tự do chiến', en: 'Free Battle' }, seal: '無盡',
+  rule: { zh: 'Tùy chọn tướng và chiến trường, giao chiến không ngừng, không ghi chiến tích', en: 'Any officer, any field, endless waves. No records kept.' } } };
 const LISTS = { story: CHAPTERS, trial: [...TRIALS, FREE], free: CHAPTERS };   // what the chapter panel lists per mode
 const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 const rk = (r) => (r ? `<i class="t-rk r${r}">${r}</i>` : '');                    // a rank as a ringed brush letter
-export const CONTROLS = [   // also the pause menu's table (main.js)
-  ['移動', 'Move', '<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / arrows', 'left stick'],
-  ['攻擊', 'Attack', '<kbd>J</kbd> / left click — tap for the full combo', '<kbd>X</kbd> □'],
-  ['蓄力', 'Charge', '<kbd>K</kbd> / right click — mid-combo for charge attacks', '<kbd>Y</kbd> △'],
-  ['跳躍', 'Jump', '<kbd>Space</kbd>', '<kbd>A</kbd> ×'],
-  ['閃避', 'Dodge', '<kbd>L</kbd> / <kbd>Shift</kbd>', '<kbd>R1</kbd> <kbd>R2</kbd>'],
-  ['無雙', 'Musou', '<kbd>I</kbd> — when the gold gauge is full', '<kbd>B</kbd> ○'],
-  ['視角', 'Camera', 'mouse (click the field to lock it) / <kbd>Q</kbd><kbd>E</kbd>', 'right stick'],
-  ['鎖定', 'Recenter', '<kbd>R</kbd> — behind you, or onto the nearest officer', '<kbd>L1</kbd> <kbd>L2</kbd>'],
-  ['瞄準', 'Aim (黃忠)', 'hold <kbd>K</kbd> / right click (standing or running) — mouse or stick aims, release to loose', 'hold <kbd>Y</kbd> △'],
-  ['暫停', 'Pause', '<kbd>Esc</kbd> (also frees the mouse)', ''],
+const LOCK = '<i class="t-lk">Khóa</i>';                                            // a locked chapter / trial / tier
+// the officers with an aim mode (kit.moves.aim: the bow kit), named on the controls' Aim row
+const AIMERS = Object.values(CHARS).filter((c) => c.kit.moves?.aim).map((c) => c.name.zh).join(', ');
+export const CONTROLS = [   // also the pause menu's table (main.js): [label, English, keyboard / mouse, gamepad]
+  ['Di chuyển', 'Move', '<kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / phím mũi tên', 'cần trái'],
+  ['Tấn công', 'Attack', '<kbd>J</kbd> / chuột trái — bấm liên tiếp ra trọn chuỗi đòn', '<kbd>X</kbd> □'],
+  ['Tụ lực', 'Charge', '<kbd>K</kbd> / chuột phải — bấm giữa chuỗi đòn để ra đòn tụ lực', '<kbd>Y</kbd> △'],
+  ['Nhảy', 'Jump', '<kbd>Space</kbd>', '<kbd>A</kbd> ×'],
+  ['Né đòn', 'Dodge', '<kbd>L</kbd> / <kbd>Shift</kbd>', '<kbd>R1</kbd> <kbd>R2</kbd>'],
+  ['Vô Song', 'Musou', '<kbd>I</kbd> — khi thanh vàng đầy', '<kbd>B</kbd> ○'],
+  ['Góc nhìn', 'Camera', 'chuột (bấm vào chiến trường để khóa chuột) / <kbd>Q</kbd><kbd>E</kbd>', 'cần phải'],
+  ['Khóa mục tiêu', 'Recenter', '<kbd>R</kbd> — quay về sau lưng, hoặc nhắm tướng địch gần nhất', '<kbd>L1</kbd> <kbd>L2</kbd>'],
+  ['Ngắm bắn', `Aim${AIMERS ? ` · ${AIMERS}` : ''}`, 'giữ <kbd>K</kbd> / chuột phải (đứng hay chạy đều được) — chuột hoặc cần để ngắm, thả ra là bắn', 'giữ <kbd>Y</kbd> △'],
+  ['Tạm dừng', 'Pause', '<kbd>Esc</kbd> (đồng thời nhả chuột)', ''],
 ];
+/** The Hán glyph on an officer's standard: his surname (in this game courtesy.zh is the Hán name), else his seal's first. */
+export const standardGlyph = (c) => (/^[\u3400-\u9fff]{2,}$/.test(c.courtesy?.zh || '') ? c.courtesy.zh[0] : c.seal[0]);
+/** a == b ignoring case (Vietnamese names carry the same text in .zh and .en: show it once). */
+export const same = (a, b) => !b || String(a).toLocaleLowerCase('vi') === String(b).toLocaleLowerCase('vi');
 
 // ---- key-art stage. Frame: origin at the HOME map's def.stage.title point (定軍山: up its pass road, north of the idle
 // gameplay hero), camera looks +Z (up the valley, into the low sun → rim light).
@@ -79,8 +78,8 @@ export const STAGE = {
   // at Zhao Yun's shoulder line with air between them. x/z in metres; narrow = [x, z] on ≤ 4:3 windows (nk in view()).
   // tag = [x, y] rem from the head to the tag's bottom centre. banner = the surname standard behind its officer (DoF).
   cast: [
-    { id: 'dinhbolinh', clip: 'mu_act', u: 1, x: 0.2, z: 0, face: Math.PI + 0.1, arm: [-6, 0, 172, 8], look: [0.7, 1.8], tag: [-4.5, 6, 'L'], banner: [-0.2, 7.5] },
-    { id: 'dinhlien', clip: 'aim', u: 5 / 30, x: -1.0, z: 0.7, face: Math.PI + 0.25, head: [-4, -10, 0], look: [1.0, 2.0], tag: [-1.5, -6],
+    { id: 'dinhbolinh', clip: 'mu_act', u: 1, x: 0.2, z: 0, face: Math.PI + 0.1, arm: [-6, 0, 172, 8], look: [0.7, 1.8], tag: [-1.5, -1, 'L'], banner: [-0.2, 7.5] },
+    { id: 'dinhlien', clip: 'aim', u: 5 / 30, x: -1.0, z: 0.7, face: Math.PI + 0.25, head: [-4, -10, 0], look: [1.0, 2.0], tag: [1, -7],
       narrow: [-0.95, 0.5], banner: [-4.6, 10] },
   ],
 };
@@ -101,22 +100,23 @@ const SMOKE = [[-17, 16, 40, 38, 24, 0.2, 0.1, 0.06, 0.9], [-26, 22, 46, 44, 26,
 export function createTitle(el, flow) {
   el.innerHTML = `
     <div class="t-veil"></div>
-    ${STAGE.cast.map(({ id }) => { const c = CHARS[id]; return `<div class="t-tag" data-id="${id}"><i>${c.seal}</i><b>${c.name.zh}</b><small>${c.name.en}</small></div>`; }).join('')}
+    ${STAGE.cast.map(({ id }) => { const c = CHARS[id]; return `<div class="t-tag" data-id="${id}"><i>${c.seal}</i><div><b>${c.name.zh}</b><small>${c.title.zh}</small></div></div>`; }).join('')}
     <div class="t-band">
-      <div class="t-logo"><i class="t-seal">三國</i><h1 data-t="無雙"><span>無雙</span></h1>
-        <p class="t-en"><span>VOXEL MUSOU</span></p></div>
-      <div class="t-press"><b>按任意鍵開始</b><small><kbd>Enter</kbd> Press any key</small></div>
+      <div class="t-logo"><i class="t-seal">十二使君</i><h1 data-t="Thập Nhị&#10;Sứ Quân"><span>Thập Nhị<br>Sứ Quân</span></h1>
+        <p class="t-en"><span>LOẠN 12 SỨ QUÂN · 944–968</span></p></div>
+      <div class="t-press"><b>Nhấn phím bất kỳ</b><small><kbd>Enter</kbd> Press any key</small></div>
       <nav class="t-menu t-main">${ITEMS.map((it, i) => `<button data-i="${i}" style="--i:${i}"><b>${it.zh}</b><small>${it.en}</small>${SWASH}</button>`).join('')}</nav>
       <div class="t-cpanel"><nav class="t-menu t-chs"></nav>
         <div class="t-ccard"><h3></h3><p class="t-cname"><b></b><i></i></p><p class="t-cera"></p><p class="t-cline"><b></b><small></small></p>
           <p class="t-cfoot"></p></div></div>
-      <div class="t-dpanel"><nav class="t-menu t-dif">${DIFFS.map((d, i) => `<button data-d="${i}" style="--i:${i}"><b>${d.zh}<i class="t-lk">鎖</i><i class="t-rk"></i></b><small>${d.en}</small>${SWASH}</button>`).join('')}</nav>
-        <div class="t-dcard"><h3>難度<small>Difficulty</small></h3><p class="t-dline"><b></b><small></small></p>
-          <ul class="s-stats t-dbars">${[['敵勢', 'Pressure'], ['敵將', 'Officers'], ['傷害', 'Damage']].map(([zh, en]) => `<li><b>${zh}</b><small>${en}</small><span>${'<i></i>'.repeat(5)}</span></li>`).join('')}</ul></div></div>
+      <div class="t-dpanel"><nav class="t-menu t-dif">${DIFFS.map((d, i) => `<button data-d="${i}" style="--i:${i}"><b>${d.zh}${LOCK}<i class="t-rk"></i></b><small>${d.en}</small>${SWASH}</button>`).join('')}</nav>
+        <div class="t-dcard"><h3>Độ khó<small>Difficulty</small></h3><p class="t-dline"><b></b><small></small></p>
+          <ul class="s-stats t-dbars">${[['Thế giặc', 'Pressure'], ['Tướng giặc', 'Officers'], ['Sát thương', 'Damage']].map(([zh, en]) => `<li><b>${zh}</b><small>${en}</small><span>${'<i></i>'.repeat(5)}</span></li>`).join('')}</ul></div></div>
     </div>
-    <section class="t-ctl"><h2>操作說明<small>Controls</small></h2>
+    <section class="t-ctl"><h2>Hướng dẫn điều khiển<small>Controls</small></h2>
       <table>${CONTROLS.map(([zh, en, kb, pad]) => `<tr><th>${zh}<small>${en}</small></th><td>${kb}</td><td class="pad">${pad}</td></tr>`).join('')}</table>
-      <p>Tap attack for the combo, press charge mid-combo for a finisher. Fill the gold gauge and unleash 無雙.</p></section>
+      <p>Bấm tấn công liên tiếp để ra chuỗi đòn, chen tụ lực giữa chuỗi để kết liễu. Tích đầy thanh vàng rồi tung Vô Song.
+        <small>Tap attack for the combo, press charge mid-combo for a finisher. Fill the gold gauge and unleash the Musou.</small></p></section>
     <section class="t-rec"></section>
     <footer class="ui-foot"></footer>`;
   const $ = (s) => el.querySelector(s), btns = [...el.querySelectorAll('.t-main button')], dbtns = [...el.querySelectorAll('.t-dif button')];
@@ -131,16 +131,16 @@ export function createTitle(el, flow) {
     if (!quiet) sfx('move');
   };
   const foot = () => {
-    const what = dmode ? '難度' : cmode === 'story' ? '章節' : cmode === 'trial' ? '試煉' : cmode ? '戰場' : '';
-    $('.ui-foot').innerHTML = panel ? `<span><kbd>Esc</kbd><kbd class="pad">B</kbd>返回<small>Back</small></span>`
-      : `<span><kbd>↑</kbd><kbd>↓</kbd>選擇${what}<small>Select</small></span><span><kbd>Enter</kbd><kbd class="pad">A</kbd>決定<small>Confirm</small></span>`
-        + (what ? `<span><kbd>Esc</kbd><kbd class="pad">B</kbd>返回<small>Back</small></span>` : '');
+    const what = dmode ? 'độ khó' : cmode === 'story' ? 'chương' : cmode === 'trial' ? 'thử thách' : cmode ? 'chiến trường' : '';
+    $('.ui-foot').innerHTML = panel ? `<span><kbd>Esc</kbd><kbd class="pad">B</kbd>Quay lại<small>Back</small></span>`
+      : `<span><kbd>↑</kbd><kbd>↓</kbd>Chọn ${what}<small>Select</small></span><span><kbd>Enter</kbd><kbd class="pad">A</kbd>Xác nhận<small>Confirm</small></span>`
+        + (what ? `<span><kbd>Esc</kbd><kbd class="pad">B</kbd>Quay lại<small>Back</small></span>` : '');
   };
   /** Why entry i of the panel's list can't be picked yet ([zh, en]), or null: a story chapter waits on the one before
    *  it, a trial on the records (progress.js UNLOCKS); battlefields are all open. */
   const lockOf = (i) => {
     const prev = CHAPTERS[i - 1]?.CH;
-    if (cmode === 'story') return chapterOpen(i) ? null : [`攻克${prev.num.zh}「${prev.title.zh}」後開啟`, `Clear ${prev.title.en} to unlock`];
+    if (cmode === 'story') return chapterOpen(i) ? null : [`Bình định ${prev.num.zh} «${prev.title.zh}» để mở`, `Clear ${prev.title.en} to unlock`];
     return cmode === 'trial' ? locked(list[i].CH.id)?.rule ?? null : null;
   };
   // chapter panel: the card shows the focused chapter (story: era, the prologue's opening, its officers each with his
@@ -151,16 +151,18 @@ export function createTitle(el, flow) {
     ccur = i; cbtns.forEach((b, k) => b.classList.toggle('on', k === i));
     const { CH, PROLOGUE } = list[i], story = cmode === 'story', trial = cmode === 'trial', lock = lockOf(i);
     const p = PROLOGUE?.find((q) => q.cols), field = CHAPTERS.find((m) => m.CH.map === CH.map)?.CH.title;
-    const [zh, en] = lock || (story ? [p.cols.join('，'), p.en] : trial ? [CH.rule.zh, CH.rule.en] : ['任選武將，於此鏖戰', 'Any officer, endless waves on this field']);
+    // story: the prologue's opening card in Vietnamese prose (its `vi`; the Hán columns as a fallback)
+    const [zh, en] = lock || (story ? [p?.vi || p?.cols.join('，') || '', p?.en || ''] : trial ? [CH.rule.zh, CH.rule.en]
+      : ['Tùy chọn tướng, giao chiến không ngừng trên chiến trường này', 'Any officer, endless waves on this field']);
     $('.t-ccard').classList.toggle('lock', !!lock);
-    $('.t-ccard h3').innerHTML = cmode === 'free' ? '戰場<small>Battlefield</small>' : `${CH.num.zh}<small>${CH.num.en}</small>`;
+    $('.t-ccard h3').innerHTML = cmode === 'free' ? 'Chiến trường<small>Battlefield</small>' : `${CH.num.zh}<small>${CH.num.en}</small>`;
     $('.t-cname b').textContent = CH.title.zh; $('.t-cname i').textContent = CH.seal;
-    $('.t-cera').innerHTML = !trial ? `${CH.era.zh}<small>${CH.era.en}</small>` : field ? `戰場・${field.zh}<small>${field.en}</small>` : '';
+    $('.t-cera').innerHTML = !trial ? `${CH.era.zh}<small>${CH.era.en}</small>` : field ? `Chiến trường · ${field.zh}${same(field.zh, field.en) ? '' : `<small>${field.en}</small>`}` : '';
     $('.t-cline b').textContent = zh; $('.t-cline small').textContent = en;
     // foot: a chapter's officers, each with his own best rank; a trial's best record (the stat it is ranked on first)
     const who = story ? CH.heroes.filter((id) => CHARS[id]) : [], b = trial && best(CH.id);
-    $('.t-cfoot').innerHTML = who.length ? `<span>出陣<small>Officers</small></span>${who.map((id) => `<em><canvas width="20" height="20"></canvas>${CHARS[id].name.zh}${rk(best(CH.id, id)?.rank)}</em>`).join('')}`
-      : b ? `<span>最佳<small>Best</small></span>${(CH.best === 'kos' ? [`${b.kos} 擊破`, mmss(b.time)] : [mmss(b.time), `${b.kos} 擊破`]).map((t) => `<em>${t}</em>`).join('')}<strong class="r${b.rank}"><b>${b.rank}</b></strong>` : '';
+    $('.t-cfoot').innerHTML = who.length ? `<span>Xuất trận<small>Officers</small></span>${who.map((id) => `<em><canvas width="20" height="20"></canvas>${CHARS[id].name.zh}${rk(best(CH.id, id)?.rank)}</em>`).join('')}`
+      : b ? `<span>Kỷ lục<small>Best</small></span>${(CH.best === 'kos' ? [`${b.kos} hạ`, mmss(b.time)] : [mmss(b.time), `${b.kos} hạ`]).map((t) => `<em>${t}</em>`).join('')}<strong class="r${b.rank}"><b>${b.rank}</b></strong>` : '';
     el.querySelectorAll('.t-cfoot canvas').forEach((cv, k) => paintPortrait(cv, CHARS[who[k]]));
     if (!quiet) sfx('move');
   };
@@ -171,8 +173,8 @@ export function createTitle(el, flow) {
     if (mode) {
       const story = mode === 'story';
       list = LISTS[mode];
-      $('.t-chs').innerHTML = list.map(({ CH }, i) => `<button data-c="${i}" class="${lockOf(i) ? 'lock' : ''}" style="--i:${i}"><b>${story ? `<em>${CH.num.zh}</em>` : ''}${CH.title.zh}<i class="t-lk">鎖</i>${
-        mode === 'free' ? '' : rk(best(CH.id)?.rank)}</b><small>${story ? `${CH.num.en} · ` : ''}${CH.title.en}</small>${SWASH}</button>`).join('');
+      $('.t-chs').innerHTML = list.map(({ CH }, i) => `<button data-c="${i}" class="${lockOf(i) ? 'lock' : ''}" style="--i:${i}"><b>${story ? `<em>${CH.num.zh}</em>` : ''}${CH.title.zh}${LOCK}${
+        mode === 'free' ? '' : rk(best(CH.id)?.rank)}</b><small>${story && same(CH.title.zh, CH.title.en) ? CH.num.en : `${story ? `${CH.num.en} · ` : ''}${CH.title.en}`}</small>${SWASH}</button>`).join('');
       cbtns = [...el.querySelectorAll('.t-chs button')];
       let k = list.findIndex((m) => m.CH.id === id);
       if (k < 0) { k = 0; if (story) while (k < list.length - 1 && chapterOpen(k + 1)) k++; }
@@ -192,10 +194,10 @@ export function createTitle(el, flow) {
       return `<td>${r ? rk(r) : '<i class="t-rk"></i>'}<span>${DIFFS.map((d) => `<u class="${cell?.[d.id] ? 'f' : ''}"></u>`).join('')}</span></td>`;
     }).join('')}</tr>`;
     const rows = [...CHAPTERS, ...TRIALS].map(row).join('');
-    $('.t-rec').innerHTML = `<h2>戰績<small>Records</small><em><b>${done}</b> / ${all}<small>cleared</small></em></h2>
+    $('.t-rec').innerHTML = `<h2>Chiến tích<small>Records</small><em><b>${done}</b> / ${all}<small>đã thắng · cleared</small></em></h2>
       <div class="t-rbody"><div><table><tr><th></th>${who.map((id) => `<td class="${locked(id) ? 'lock' : ''}"><canvas width="20" height="20"></canvas><b>${CHARS[id].name.zh}</b></td>`).join('')}</tr>${rows}</table>
-      <p class="t-rleg"><span>${'<u class="f"></u>'.repeat(DIFFS.length)}</span>${DIFFS.map((d) => d.zh).join(' · ')}<small>one pip per difficulty cleared</small></p></div>
-      <ul>${UNLOCKS.map((u) => { const lk = locked(u.id); return `<li class="${lk ? '' : 'open'}"><i>${lk ? '鎖' : '開'}</i><b>${u.zh}</b><span>${lk ? u.rule[0] : '已解鎖'}<small>${lk ? u.rule[1] : `${u.en} · unlocked`}</small></span></li>`; }).join('')}</ul></div>`;
+      <p class="t-rleg"><span>${'<u class="f"></u>'.repeat(DIFFS.length)}</span>${DIFFS.map((d) => d.zh).join(' · ')}<small>mỗi vạch: một độ khó đã thắng · one pip per difficulty cleared</small></p></div>
+      <ul>${UNLOCKS.map((u) => { const lk = locked(u.id); return `<li class="${lk ? '' : 'open'}"><i>${lk ? 'Khóa' : 'Mở'}</i><b>${u.zh}</b><span>${lk ? u.rule[0] : 'Đã mở khóa'}<small>${lk ? u.rule[1] : `${u.en} · unlocked`}</small></span></li>`; }).join('')}</ul></div>`;
     el.querySelectorAll('.t-rec canvas').forEach((cv, k) => paintPortrait(cv, CHARS[who[k]]));
   }
   /** The overlay beside the menu: 'ctl' controls, 'rec' the records wall, null = none. */
@@ -308,13 +310,13 @@ export function createTitle(el, flow) {
       // thin faded-vermilion hems (a wide dark border read as a black doorway frame round the cloth when backlit)
       g.fillStyle = '#a8442a'; g.fillRect(0, 0, 128, 10); g.fillRect(0, 0, 5, 320); g.fillRect(123, 0, 5, 320);
       for (let y = 300; y < 320; y += 4) g.clearRect(5 + ((y * 7) % 20), y, 110 - ((y * 13) % 30), 4);    // frayed hem
-      g.fillStyle = '#140905'; g.font = '700 96px "Xingkai SC", "STXingkai", "HudBrush", serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillStyle = '#140905'; g.font = '700 96px "SQHan", "HudBrush", "Xingkai SC", "STXingkai", serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
       g.fillText(glyph, 64, 150);
       tex.needsUpdate = true;
     };
     const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
     paint();
-    document.fonts?.load('700 96px HudBrush', glyph).then(paint, () => {});
+    document.fonts?.load('700 96px SQHan', glyph).then(paint, () => {});
     return tex;
   }
   function build(scene) {
@@ -329,7 +331,7 @@ export function createTitle(el, flow) {
       o.root.traverse((e) => { if (e.isMesh && e.frustumCulled) parts.push(e); });
       cast.push(Object.assign(o, { c, parts }));
       // surname standard: pole + a nobori cloth (CPU wave on a 5 × 12 grid)
-      const tex = bannerTex(CHARS[c.id].name.zh[0]);
+      const tex = bannerTex(standardGlyph(CHARS[c.id]));
       const cloth = new THREE.PlaneGeometry(1.15, 3.1, 4, 12);
       // low warm emissive = the low sun glowing through the cloth from behind (the camera sees its shaded face)
       const mat = new THREE.MeshStandardMaterial({ map: tex, emissiveMap: tex, emissive: 0xffa060, emissiveIntensity: 0.3, side: THREE.DoubleSide,
@@ -465,7 +467,9 @@ export function createTitle(el, flow) {
       cast[i].rig.joints.head.getWorldPosition(V);
       if (c.tag[2] === 'L') V.set(pLx, V.y, pLz);
       V.project(camera);
-      const px = Math.max(menuR + tagW[i] / 2, Math.min(w - tagW[i] / 2 - 2 * rem, (V.x * 0.5 + 0.5) * w + c.tag[0] * rem));
+      // 'L' tags (horizontal in this game: wide) hang left of the spear: tag[0] is from the spear to the tag's right edge
+      const ax = (V.x * 0.5 + 0.5) * w + c.tag[0] * rem - (c.tag[2] === 'L' ? tagW[i] / 2 : 0);
+      const px = Math.max(menuR + tagW[i] / 2, Math.min(w - tagW[i] / 2 - 2 * rem, ax));
       const py = Math.max(20 * rem, (0.5 - V.y * 0.5) * h + c.tag[1] * rem);
       tags[i].style.transform = `translate(${px.toFixed(1)}px, ${py.toFixed(1)}px) translate(-50%, -100%)`;
     }
