@@ -7,12 +7,12 @@
 import { chromium } from '/opt/node22/lib/node_modules/playwright/index.mjs';
 const args = process.argv.slice(2), opt = Object.fromEntries(args.filter((a) => a.startsWith('--')).map((a) => a.slice(2).split('=')));
 const [url, out, wait = '15000'] = args.filter((a) => !a.startsWith('--'));
-const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--autoplay-policy=no-user-gesture-required'] });
+const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--autoplay-policy=no-user-gesture-required', '--disable-gpu-watchdog'] });
 const p = await b.newPage({ viewport: { width: +(process.env.W || 960), height: +(process.env.H || 540) } });
 const logs = [];
 p.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') logs.push(m.type() + ': ' + m.text()); });
 p.on('pageerror', (e) => logs.push('PAGEERROR: ' + e.message + '\n' + (e.stack || '').split('\n').slice(0, 4).join('\n')));
-await p.goto(url);
+await p.goto(url, { waitUntil: 'commit', timeout: 180000 });   // a loaded box: don't wait for 'load'
 await p.waitForTimeout(+wait);
 await p.screenshot({ path: out, timeout: 180000 });
 if (opt.keys || opt.hold) {
