@@ -5,7 +5,7 @@ import { FACE, PAL } from './model.js';
 
 export const CHAR = {
     id: 'khuongviet', side: { zh: 'Nhà Đinh', en: 'Đinh' },
-    name: { zh: 'Ngô Chân Lưu', en: 'Ngô Chân Lưu' }, courtesy: { zh: '匡越', en: 'Khuông Việt' }, seal: '匡越',
+    name: { zh: 'Ngô Chân Lưu', en: 'Ngô Chân Lưu' }, courtesy: { zh: '吳真流', en: 'Khuông Việt' }, seal: '匡越',
     title: { zh: 'Khuông Việt Đại Sư', en: 'The Master Who Upholds Việt' }, motto: 'Thiền sư · Phất trần trấn tà · Khuông phò nước Việt',
     weapon: { zh: 'Phất trần', en: 'Horsehair Whisk' },
     bio: {
