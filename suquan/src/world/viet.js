@@ -326,3 +326,85 @@ export function haystack(k, x, z, s = 1) {
   for (let i = 0; i < 5; i++) props.push({ s: [2.4 * s * (1 - i * 0.17), 0.6 * s, 2.4 * s * (1 - i * 0.17)], p: [x, gy + 0.3 * s + i * 0.55 * s, z], r: [0, R.range(0, 3), 0], c: shade(0xc8a85a, R.range(0.85, 1.05)) });
   props.push({ s: [0.12, 1.2 * s, 0.12], p: [x, gy + 3.2 * s, z], c: 0x5a4030 });
 }
+
+// ================================================================ Chương IV «Phong Châu» helpers (appended block; the
+// Phong Châu field, suquan/src/world/maps/phongchau.js, is their first user)
+//   teaBushes(k, x, z, o)          đồi chè: rows of clipped tea bushes across a midland hill, each on the ground under it
+//                                  (o = { rows = 4, len = 12, gap = 1.7, yaw = 0 })
+//   broadleaf(k, x, z, s)          a dark midland forest tree (trám, sau sau): a leaning trunk under a layered crown
+//   bambooTorch(k, x, z, o)        đuốc tre: a bamboo pole, a lashed bundle and its flame (o = { h = 3.2, s = 0.35, gate })
+//   dongSonHouse(out, x, y, z, yaw, s, c)  nhà sàn mái cong, the house of the bronze drums: piles, a deck, low woven walls
+//                                  and a saddle roof whose ridge sags in the middle and sweeps up into boat-prow gables
+//                                  with bird finials; pushes boxes into any list (k.props, or a set piece's own mesh —
+//                                  c = { roof, wood, wall } colours). Footprint ≈ 7 s × 12 s (+ the prows).
+//   localQ(out, x0, y0, z0, yaw)   box pusher like k.local but the box rotation [rx, ry, rz] is applied in the house's own
+//                                  frame (k.local's tilts turn about the world axes once yaw ≠ 0)
+import { Quaternion, Euler } from 'three';
+
+const _q0 = new Quaternion(), _q1 = new Quaternion(), _eu = new Euler();
+export function localQ(out, x0, y0, z0, yaw) {
+  const cs = Math.cos(yaw), sn = Math.sin(yaw);
+  _q0.setFromEuler(_eu.set(0, yaw, 0));
+  return (lx, ly, lz, s, c, rr = [0, 0, 0]) => {
+    _q1.setFromEuler(_eu.set(rr[0], rr[1], rr[2], 'YXZ')).premultiply(_q0);
+    const e = new Euler().setFromQuaternion(_q1, 'XYZ');
+    out.push({ s, p: [x0 + lx * cs + lz * sn, y0 + ly, z0 - lx * sn + lz * cs], r: [e.x, e.y, e.z], c });
+  };
+}
+
+export function teaBushes(k, x, z, { rows = 4, len = 12, gap = 1.7, yaw = 0 } = {}) {
+  const { r: R, props } = k, cs = Math.cos(yaw), sn = Math.sin(yaw);
+  for (let i = 0; i < rows; i++) for (let d = -len / 2; d < len / 2; d += 1.05) {
+    const lx = (i - (rows - 1) / 2) * gap, px = x + lx * cs + d * sn, pz = z - lx * sn + d * cs;
+    if (k.inAt(px, pz) > -1.5) continue;                                          // never on the walk field
+    const gy = k.topAt(px, pz), w = R.range(1.0, 1.25);
+    props.push({ s: [w, 0.75, 1.15], p: [px, gy + 0.3, pz], r: [0, yaw, 0], c: shade(0x2c5428, R.range(0.8, 1.1)) });
+    props.push({ s: [w * 0.8, 0.22, 0.9], p: [px, gy + 0.72, pz], r: [0, yaw, 0], c: shade(0x4a7a34, R.range(0.85, 1.15)) });   // fresh tips
+  }
+}
+
+export function broadleaf(k, x, z, s = 1) {
+  const { r: R, props } = k, gy = k.topAt(x, z), H = R.range(5, 8) * s, lx = R.range(-0.08, 0.08), lz = R.range(-0.08, 0.08);
+  props.push({ s: [0.5 * s, H * 0.7, 0.5 * s], p: [x + lx * H * 0.35, gy + H * 0.35, z + lz * H * 0.35], r: [lz, 0, -lx], c: 0x3a2c22 });
+  for (let q = 0, N = R.int(4, 7); q < N; q++) {
+    const a = R.range(0, TAU), d = R.range(0, 1.6) * s, w = R.range(2.2, 3.6) * s;
+    props.push({ s: [w, w * R.range(0.5, 0.75), w], p: [x + lx * H + Math.sin(a) * d, gy + H * R.range(0.7, 1.0), z + lz * H + Math.cos(a) * d],
+      r: [0, R.range(0, 3), 0], c: shade(R.chance(0.3) ? 0x2a4422 : 0x22381e, R.range(0.75, 1.15)) });
+  }
+}
+
+export function bambooTorch(k, x, z, { h = 3.2, s = 0.35, gate = null } = {}) {
+  const gy = k.ground(x, z);
+  k.props.push({ s: [0.14, h, 0.14], p: [x, gy + h / 2, z], c: 0x8a8a44 }, { s: [0.17, 0.06, 0.17], p: [x, gy + h * 0.45, z], c: 0x5a5a2a },
+    { s: [0.34, 0.5, 0.34], p: [x, gy + h + 0.15, z], c: 0x5a4024 }, { s: [0.4, 0.08, 0.4], p: [x, gy + h - 0.05, z], c: 0x3a2a18 });
+  k.fire(x, gy + h + 0.35, z, s, false, gate);
+}
+
+export function dongSonHouse(out, x, y, z, yaw = 0, s = 1, { roof = 0x8a7448, wood = 0x4a3220, wall = 0x9a7c4c } = {}) {
+  const L = localQ(out, x, y, z, yaw), W = 7 * s, D = 12 * s, FH = 2.2 * s, WH = 1.6 * s;
+  for (const px of [-1, 1]) for (let pz = -1; pz <= 1.01; pz += 0.5) L(px * (W / 2 - 0.4 * s), FH / 2, pz * (D / 2 - 0.4 * s), [0.4 * s, FH, 0.4 * s], wood);   // piles
+  L(0, FH / 2, 0, [0.4 * s, FH, 0.4 * s], wood);
+  L(0, FH + 0.12, 0, [W + 0.6, 0.26, D + 0.4], shade(wood, 1.2));                          // deck
+  for (const sx of [-1, 1]) L(sx * W / 2, FH + WH / 2 + 0.25, 0, [0.16, WH, D], shade(wall, 0.95));   // low woven walls
+  for (const sz of [-1, 1]) L(0, FH + WH / 2 + 0.25, sz * D / 2, [W, WH, 0.16], wall);
+  L(0, FH + 0.9 * s, -D / 2 - 0.1, [1.3 * s, 1.5 * s, 0.1], 0x1a120c);                        // doorway
+  L(0, FH * 0.55, -D / 2 - 1.2 * s, [1.1 * s, 0.14, 2.6 * s], shade(wood, 1.1), [0.72, 0, 0]);   // ladder
+  // saddle roof: along the ridge (local z) the ridge sags in the middle and lifts toward both gables; each slice is two
+  // slopes that reach down past the walls nearly to the deck
+  const R0 = FH + WH + 0.3, N = 9, span = D + 2.4 * s;
+  for (let i = 0; i < N; i++) {
+    const t = (i + 0.5) / N * 2 - 1, lz = t * span / 2, rise = 2.2 * s * t * t, top = R0 + 3.1 * s + rise, hw = W / 2 + 1.1 * s + rise * 0.25;
+    const slope = Math.hypot(hw, top - R0 + 0.4), ang = Math.atan2(top - R0 + 0.4, hw);
+    for (const sx of [-1, 1]) L(sx * hw / 2, (top + R0 - 0.4) / 2, lz, [slope + 0.3, 0.32 * s, span / N + 0.12], shade(roof, 0.92 + (i % 2) * 0.06), [0, 0, -sx * ang]);
+    L(0, top + 0.1, lz, [0.5 * s, 0.35 * s, span / N + 0.1], shade(roof, 0.7));                 // ridge bundle
+  }
+  // boat-prow gables: the ridge beams sweep on up and out past both ends, a bird finial on each tip
+  for (const sz of [-1, 1]) {
+    const lz = sz * (span / 2 + 0.9 * s), top = R0 + 3.1 * s + 2.2 * s;
+    L(0, top + 0.6 * s, lz, [0.34 * s, 0.34 * s, 2.6 * s], shade(wood, 1.3), [-sz * 0.55, 0, 0]);
+    L(0, top + 1.45 * s, lz + sz * 1.0 * s, [0.3 * s, 0.5 * s, 0.6 * s], 0x6a5a3a);                // bird body
+    L(0, top + 1.75 * s, lz + sz * 1.35 * s, [0.12 * s, 0.12 * s, 0.7 * s], 0x6a5a3a, [-sz * 0.3, 0, 0]);   // the long beak
+    for (const sx of [-1, 1]) L(sx * 0.35 * s, top + 1.5 * s, lz + sz * 0.9 * s, [0.6 * s, 0.08, 0.3 * s], 0x5a4a30, [0, 0, sx * 0.4]);   // spread wings
+    L(0, R0 + 1.2 * s, sz * (D / 2 + 0.2), [W * 0.6, 2.2 * s, 0.14], shade(wall, 0.8));      // gable screen
+  }
+}
