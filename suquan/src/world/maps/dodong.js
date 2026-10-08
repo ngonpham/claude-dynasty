@@ -336,7 +336,7 @@ function buildSet(root, k) {
 
   // ---- rain (one instanced draw): N streaks in a 56 m box round the hero, fixed in the world as he moves
   const N = 520, BOX = 56, TOP = 22, rain = new THREE.InstancedMesh(new THREE.BoxGeometry(0.03, 1.2, 0.03),
-    new THREE.MeshBasicMaterial({ color: 0xa8b4c8, transparent: true, opacity: 0.32, depthWrite: false }), N);
+    new THREE.MeshBasicMaterial({ color: 0xa8b4c8, transparent: true, opacity: 0.26, depthWrite: false }), N);
   rain.frustumCulled = false; rain.name = 'rain';
   root.add(rain);
   const drops = Array.from({ length: N }, (_, i) => [hash01(i, 1, 9) * BOX, hash01(i, 2, 9) * BOX, hash01(i, 3, 9), 0.8 + hash01(i, 4, 9) * 0.4]);

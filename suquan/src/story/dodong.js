@@ -186,8 +186,8 @@ export const BEATS = [
     say: [{ who: 'giudon', zh: 'Đồn này ta giữ hơn một năm, chưa từng mất một tấc đất! Ra cửa ngầm, đánh!', en: 'I have held this post for more than a year without losing an inch! Out through the postern — attack!' }],
   },
   {
-    // the fire has eaten the gate through (the keeper beaten, or half a minute more)
-    when: [{ timer: true, down: 'giudon' }, { timer: true, wait: 20 * 60 }],
+    // the fire has eaten the gate through: at the timer once the keeper is beaten, else ≈ 12 s after it (50 s after his sally)
+    when: [{ timer: true, down: 'giudon' }, { timer: true, wait: 50 * 60 }],
     gate: 'cuagiua', defend: null, fail: null, heal: 0.3, morale: 0.15, retire: true, hush: true, waves: false,
     banner: { html: '<em>Cổng lũy giữa</em> đã cháy sập!', en: 'The middle rampart\'s gate has burnt through and fallen!', dur: 200, big: true },
     officers: { kytuong: { at: ['luygiua', 0, -0.2], engaged: true } },
