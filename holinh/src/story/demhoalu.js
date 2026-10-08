@@ -1,0 +1,21 @@
+// PLACEHOLDER script for Màn II «Đêm Vỡ Hoa Lư» (holinh/DESIGN.md §6): a single fight on the borrowed field until the real
+// stage lands. Format: src/story/chapters.js header; text: Vietnamese in .zh, English in .en, Hán in seals / cols.
+export const CH = {
+  id: 'demhoalu', num: { zh: 'Màn II', en: 'STAGE II' }, title: { zh: 'Đêm Vỡ Hoa Lư', en: 'The Night Hoa Lư Broke' },
+  seal: '華閭夜', era: { zh: 'Năm Kỷ Mão · 979', en: '979 AD' }, map: 'demhoalu',
+  heroes: ['huutuong', 'tatuong', 'thaymo'],
+  ally: {},
+  army: { foe: 'thichkhach', ally: 'holinh' },
+  van: [],
+  hq: [0, 150],
+  rank: { kos: [200, 400, 600], time: [300, 420, 600] },
+};
+export const SPK = {};
+export const OFF = {};
+export const BEATS = [
+  { when: { wait: 30 }, army: true, waves: true, obj: { zh: 'Đánh tan quân địch', en: 'Rout the enemy' } },
+  { when: { kos: 150 }, win: true, morale: 1, banner: { html: '<em>Đêm Vỡ Hoa Lư</em>', en: 'The Night Hoa Lư Broke', dur: 200, big: true } },
+];
+export const PL_MAP = { art: '<g class="pl-labels"></g>', arrows: [] };
+export const PROLOGUE = [{ cols: ['護靈壯士', '華閭夜', '九十九棺'], vi: 'Đêm Vỡ Hoa Lư.', en: 'The Night Hoa Lư Broke.', show: [], focus: [800, 450, 1.1] }];
+export const EPILOGUE = { any: { zh: ['Đêm Vỡ Hoa Lư.'], en: ['The Night Hoa Lư Broke.'] } };
