@@ -103,7 +103,7 @@ export default {
     court: [0, -16], cuaTay: [-48, -2], cuaDong: [48, -2], dien: [0, 8], cuaNoi: [0, Z_NOI], hau: HAU, matdao: [MATDAO[0] - 2.5, MATDAO[1]],
     cuaKho: [0, Z_KHO], kho: [0, 131], altar: ALTAR },
   // story: the head of the guards' ranks in the quarter, the gallery gate ahead; free: the dragon court
-  spawn: { story: { x: 0, z: -166, yaw: 0, tilt: -0.06 }, free: { x: 0, z: -14, yaw: 0 } },
+  spawn: { story: { x: 0, z: -166, yaw: 0, tilt: -0.06 }, free: { x: 0, z: 118, yaw: 0 } },
   water: null,
   // night: a high green-white moon to the north-west, violet-black overhead, the far horizon a bruised wine colour
   sky: {
@@ -113,8 +113,8 @@ export default {
     dust: [14, 60, 1.0, 0.05], dustLit: 0x3a4a44, dustShade: 0x1c1420, apCool: 0x2e2a4e,
   },
   fog: [26, 220],
-  light: { hemi: [0x4c4a7a, 0x1e161e, 1.9], sun: [0x9ec6a8, 2.0], rim: [0xa898e0, 1.0], dir: [-0.45, 0.78, -0.42], fire: 0xff8a3a, fill: [128, 160, 0.8] },
-  post: { exposure: 1.62, sat: 1.06, shadowTint: [0.86, 0.78, 1.4], highTint: [1.22, 0.96, 0.7], rays: 0.15, rayTint: [0.6, 0.85, 0.66],
+  light: { hemi: [0x58568a, 0x241a22, 2.4], sun: [0xa4cdb0, 2.6], rim: [0xa898e0, 1.0], dir: [-0.45, 0.78, -0.42], fire: 0xff8a3a, fill: [128, 160, 0.8] },
+  post: { exposure: 1.8, sat: 1.06, shadowTint: [0.86, 0.78, 1.4], highTint: [1.22, 0.96, 0.7], rays: 0.15, rayTint: [0.6, 0.85, 0.66],
     bloom: 1.0, bloomThreshold: 1.2, hazeCool: [0.07, 0.05, 0.12], hazeWarm: [0.2, 0.12, 0.08], sunGlow: [0.5, 0.72, 0.56] },
   castle: null,
   terrain: {

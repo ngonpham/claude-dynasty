@@ -127,7 +127,7 @@ export default {
   anchors: { station: [0, -164], rgate: [0, -134], bearers: [-12, -92], shead: [0, -76], bridge: [0, RIVER_Z], knot: KNOT, nhead: [0, -26],
     duel: [22, -2], hide: HIDE, landing: [4, 20], vgate: [0, 118], yard: [0, 140], net: NET, door: [0, 160], jetty: [JETTY[0] + 2, JETTY[1]] },
   // story: the escort's head on the river road, the cleft and the karsts ahead; free: the bluff before the bridge
-  spawn: { story: { x: 0, z: -188, yaw: 0, tilt: -0.07 }, free: { x: 0, z: -100, yaw: 0 } },
+  spawn: { story: { x: 0, z: -188, yaw: 0, tilt: -0.07 }, free: { x: 2, z: -18, yaw: 0.25 } },
   water: {
     along: 'x', c: riverC, hw: HW, bed: [5.2, 0.45], fords: [[-5, 5, DECK]], y: WY, stones: 0,
     tint: { deep: 0x0c3a34, shallow: 0x3a7a64, sun: [0.92, 0.96, 0.86] },
@@ -139,15 +139,15 @@ export default {
   },
   // late afternoon [NƯỚC]: a low silver-gold sun in the west (ahead-left), jade haze in the gorge, mist on the water
   sky: {
-    sunElev: 0.1, sunAz: -0.72, sunCore: [4.2, 3.7, 2.9],
+    sunElev: 0.16, sunAz: -0.72, sunCore: [4.2, 3.7, 2.9],
     haze: 0x98acae, hazeWarm: 0xd8c29e, glow: 0xffe6bc, skyMid: 0xa2b6be, skyTop: 0x4a6a88,
     hznSun: 0xf6cc8c, hznAway: 0xa6b8b6, cloudRose: 0xd8bca8, cloudShade: 0x667888, cloudLit: 0xfff2da,
     dust: [7.0, 32.0, 2.4, 0.1], dustLit: 0xdee6e0, dustShade: 0x7a8c94, apCool: 0x88a0b0,
   },
   fog: [30, 300],
   // key light low from the west; the tavern's warm fill eases in on the last approach
-  light: { hemi: [0xb2c6ce, 0x56684a, 2.3], sun: [0xffe2ba, 3.4], rim: [0xd6e8f0, 1.25], dir: [-0.52, 0.44, 0.73], fire: 0xffa050, fill: [118, 160, 1.0] },
-  post: { exposure: 1.2, sat: 1.1, rays: 0.85, rayTint: [1.0, 0.9, 0.72], bloom: 0.6, highTint: [1.02, 1.04, 1.0], shadowTint: [0.8, 1.0, 1.1] },
+  light: { hemi: [0xb2c6ce, 0x5e704e, 2.6], sun: [0xffe2ba, 3.4], rim: [0xd6e8f0, 1.25], dir: [-0.52, 0.44, 0.73], fire: 0xffa050, fill: [118, 160, 1.0] },
+  post: { exposure: 1.32, sat: 1.12, rays: 0.85, rayTint: [1.0, 0.9, 0.72], bloom: 0.6, highTint: [1.02, 1.04, 1.0], shadowTint: [0.8, 1.0, 1.1] },
   castle: null,
   terrain: {
     pave: (x, z) => (z > 124 && z < 162 && Math.abs(x) < 16 ? 0.5 : 0) + (z > 46 && z < 116 && Math.abs(x) < 6 ? 0.35 : 0),   // the tavern yard, the village lane
