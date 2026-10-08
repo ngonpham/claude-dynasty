@@ -123,9 +123,9 @@ export default {
     dust: [8, 38, 1.5, 0.08], dustLit: 0x7a8496, dustShade: 0x2e3444, apCool: 0x5a6888,
   },
   fog: [20, 190],
-  light: { hemi: [0x7c8aa8, 0x2c3426, 2.3], sun: [0xc8d4ea, 1.5], rim: [0xd4def2, 1.5], dir: [0.2, 0.62, 0.78], fire: 0xff8a40,
+  light: { hemi: [0x8a98b4, 0x3a4430, 2.8], sun: [0xd0dcf0, 1.9], rim: [0xd8e2f4, 1.6], dir: [0.2, 0.62, 0.78], fire: 0xff8a40,
     fill: [-400, -390, 0.6] },
-  post: { exposure: 1.6, sat: 0.9, bloom: 0.6, rays: 0.25, rayTint: [0.82, 0.9, 1.1], shadowTint: [0.85, 0.95, 1.2], highTint: [0.95, 1.0, 1.08] },
+  post: { exposure: 1.75, sat: 0.95, bloom: 0.6, rays: 0.25, rayTint: [0.82, 0.9, 1.1], shadowTint: [0.85, 0.95, 1.2], highTint: [0.95, 1.0, 1.08] },
   castle: null,
   terrain: {
     pave: (x, z) => -0.6 + (Math.hypot(x - SHELTER[0], z - SHELTER[1]) < 9 ? 0.5 : 0),     // mud; the shelter's dry floor
@@ -182,7 +182,7 @@ export default {
           if (waterD(x, z) < HW + 3.5) continue;
           for (const o of [-0.85, 0.85]) {
             const px = x + o * cs, pz = z - o * sn;
-            props.push({ s: [0.32, 0.05, 1.7], p: [px, ground(px, pz) + 0.02, pz], r: [0, yaw + R(-0.05, 0.05), 0], c: sh(0x2a2218, R(0.85, 1.1)) });
+            if (r.chance(0.7)) props.push({ s: [0.22, 0.03, 1.5], p: [px, ground(px, pz) + 0.01, pz], r: [0, yaw + R(-0.05, 0.05), 0], c: sh(0x45382a, R(0.85, 1.1)) });
           }
         }
       } }

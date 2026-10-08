@@ -83,7 +83,7 @@ export default {
     hall: [HALL[0], HALL[1]],
   },
   // story: the south end of the outer ring, the rite's banners and the karsts ahead; free: the outer ring / rite ground
-  spawn: { story: { x: 0, z: -186, yaw: 0, tilt: -0.06 }, free: { x: 4, z: -36, yaw: 0 } },
+  spawn: { story: { x: 0, z: -186, yaw: 0, tilt: -0.06 }, free: { x: 0, z: -160, yaw: 0 } },
   water: {
     along: 'x', c: riverC, hw: RHW, bed: [1.8, 0.45], fords: [[-5.4, 5.4, -1.2]], y: -0.2, stones: 24,
     tint: { deep: 0x163028, shallow: 0x4e6a56, sun: [1, 0.84, 0.58] },
