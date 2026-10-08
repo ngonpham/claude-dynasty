@@ -326,3 +326,183 @@ export function haystack(k, x, z, s = 1) {
   for (let i = 0; i < 5; i++) props.push({ s: [2.4 * s * (1 - i * 0.17), 0.6 * s, 2.4 * s * (1 - i * 0.17)], p: [x, gy + 0.3 * s + i * 0.55 * s, z], r: [0, R.range(0, 3), 0], c: shade(0xc8a85a, R.range(0.85, 1.05)) });
   props.push({ s: [0.12, 1.2 * s, 0.12], p: [x, gy + 3.2 * s, z], c: 0x5a4030 });
 }
+
+// ================================================================ Chương II · Tây Phù Liệt helpers (appended block;
+// owned by the ch. II field, suquan/src/world/maps/tayphuliet.js — other fields may use them too). Same contract as
+// above: render-only boxes through the kit k, every random draw from k.r in call order.
+//   bambooScreen(k, pts, o)      a light lũy tre for long runs: leaning culms in single boxes and feathery crowns
+//                                (o = { gap = 2.2, h = 9 }) — a tenth of bambooHedge's boxes
+//   villageGate(k, x, z, yaw, w) cổng làng: two brick piers with little tiled caps, a beam and a curved roof over a w m
+//                                opening (piers stand at ±(w/2 + 0.6): give the def their footprints)
+//   earthWall(k, pts, o)         lũy đất: a low rammed-earth bank with sharpened bamboo along its crest (o = { h = 1.8, w = 2.4 })
+//   stakes(k, pts, o)            chông tre: a band of slanted sharpened bamboo stakes (o = { depth = 2, lean = 0.6 })
+//   granary(k, x, z, yaw, s)     kho thóc: a rice barn on stilts with rat-guard discs, woven walls, a deep thatch
+//   longHall(k, x, z, yaw, o)    dinh: a warlord's hall on a stone-faced terrace, red columns, a long dark-tile roof with
+//                                curled ridge ends, steps on its front (−local z) (o = { w = 22, d = 12, h = 0.9 })
+//   gateTower(k, x, z, yaw, w, o) a timber gatehouse astride a w m opening (posts at ±(w/2 + 0.5)), a railed watch room
+//                                and a thatch roof; the leaves are the map's own (o = { h = 6 })
+//   jetty(k, x, z, yaw, len, o)  bến: a plank landing stage on piles, len m along local z (o = { w = 2.6, y = 0.25 })
+//   buffalo(k, x, z, yaw, s)     trâu: a grey water buffalo with swept-back horns, standing or grazing
+//   banana(k, x, z, s)           bụi chuối: a banana clump (broad leaves, one hanging bunch)
+//   fishTrap(k, x, y, z, yaw)    đó: a conical bamboo fish trap and a net drying between two poles
+
+/** A light lũy tre: every `gap` m a clump of 3-4 culms (one leaning box each) under 2-3 feathery crowns. pts: a
+ *  polyline on any ground (stands on topAt). */
+export function bambooScreen(k, pts, { gap = 2.2, h = 9 } = {}) {
+  const { r: R, props } = k;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [ax, az] = pts[i], [bx, bz] = pts[i + 1], Lg = Math.hypot(bx - ax, bz - az);
+    for (let d = 0; d < Lg; d += gap) {
+      const t = d / Lg, x = ax + (bx - ax) * t + R.range(-0.5, 0.5), z = az + (bz - az) * t + R.range(-0.5, 0.5), gy = k.topAt(x, z) - 0.1;
+      const hh = h * R.range(0.75, 1.15);
+      for (let q = 0, N = R.int(3, 4); q < N; q++) {
+        const a = R.range(0, TAU), lean = R.range(0.04, 0.16), lx = Math.sin(a) * lean, lz = Math.cos(a) * lean, ox = R.range(-0.5, 0.5), oz = R.range(-0.5, 0.5);
+        props.push({ s: [0.16, hh, 0.16], p: [x + ox + lx * hh / 2, gy + hh / 2, z + oz + lz * hh / 2], r: [lz, 0, -lx], c: shade(R.chance(0.25) ? 0x8a9a3a : 0x5a7e34, R.range(0.8, 1.1)) });
+      }
+      for (let q = 0, N = R.int(2, 3); q < N; q++) {
+        const s = R.range(1.8, 3.2);
+        props.push({ s: [s, s * R.range(0.5, 0.8), s * R.range(0.7, 1)], p: [x + R.range(-1.2, 1.2), gy + hh * R.range(0.72, 1.02), z + R.range(-1.2, 1.2)], r: [R.range(-0.3, 0.3), R.range(0, 3), R.range(-0.3, 0.3)], c: shade(R.chance(0.3) ? 0x6a8e3a : 0x4e7a30, R.range(0.75, 1.1)) });
+      }
+    }
+  }
+}
+
+/** Cổng làng: two square brick piers with tiled caps, a timber beam with a name board and a curved tile roof over the
+ *  w m opening (local x across the road). */
+export function villageGate(k, x, z, yaw = 0, w = 8) {
+  const gy = k.ground(x, z), L = k.local(x, gy, z, yaw), BR = 0x8a5a44, H = 4.6;
+  for (const sx of [-1, 1]) {
+    const px = sx * (w / 2 + 0.6);
+    L(px, H / 2, 0, [1.2, H, 1.2], shade(BR, 0.95)); L(px, 0.25, 0, [1.5, 0.5, 1.5], 0x6a6058);
+    for (let y = 0.8; y < H; y += 0.9) L(px, y, 0, [1.24, 0.06, 1.24], 0x5a3a2c);                       // mortar courses
+    L(px, H + 0.2, 0, [1.6, 0.3, 1.6], 0x4a3a34); L(px, H + 0.55, 0, [0.9, 0.5, 0.9], 0x4a3a34);
+    L(px, H + 0.95, 0, [0.4, 0.4, 0.4], 0xc8a050);                                                   // a lotus-bud finial
+  }
+  L(0, H - 0.5, 0, [w + 1.6, 0.36, 0.5], 0x4a2a1a);                                                  // beam
+  L(0, H - 1.05, -0.28, [2.4, 0.7, 0.08], 0x2a1a10); L(0, H - 1.05, -0.33, [2.0, 0.42, 0.04], 0xc8a050);   // name board
+  tileRoof(L, w + 2.6, 2.2, H - 0.25, 1.4, 0x4a3a34);
+}
+
+/** Lũy đất: a low rammed-earth bank along a ground-following polyline, a grassy top and sharpened bamboo along the
+ *  crest. Solid: give the def a carve along it. */
+export function earthWall(k, pts, { h = 1.8, w = 2.4 } = {}) {
+  const { r: R, props } = k;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [ax, az] = pts[i], [bx, bz] = pts[i + 1], Lg = Math.hypot(bx - ax, bz - az), yaw = Math.atan2(bx - ax, bz - az);
+    for (let d = 0; d < Lg; d += 2) {
+      const l = Math.min(2.2, Lg - d + 0.2), x = ax + (bx - ax) * (d + l / 2) / Lg, z = az + (bz - az) * (d + l / 2) / Lg, gy = k.ground(x, z) - 0.15;
+      const hh = h * R.range(0.85, 1.1);
+      props.push({ s: [w, hh * 0.6, l], p: [x, gy + hh * 0.3, z], r: [0, yaw, 0], c: shade(0x8a6a48, R.range(0.85, 1.05)) });
+      props.push({ s: [w * 0.7, hh * 0.42, l], p: [x, gy + hh * 0.8, z], r: [0, yaw, 0], c: shade(0x7a5c3e, R.range(0.85, 1.05)) });
+      props.push({ s: [w * 0.66, 0.16, l], p: [x, gy + hh + 0.05, z], r: [0, yaw, 0], c: shade(0x5e6a34, R.range(0.85, 1.1)) });
+      for (let q = 0; q < 6; q++) {                                                                  // the crest of stakes
+        const t = (q + R.range(0.1, 0.9)) / 6 - 0.5, sx = x + Math.sin(yaw) * t * l, sz = z + Math.cos(yaw) * t * l, sh = R.range(0.9, 1.5);
+        props.push({ s: [0.12, sh, 0.12], p: [sx, gy + hh + sh / 2, sz], r: [R.range(-0.25, 0.25), 0, R.range(-0.25, 0.25)], c: shade(0x9a9450, R.range(0.8, 1.1)) });
+      }
+    }
+  }
+}
+
+/** Chông tre: a band `depth` m deep (to the right of the polyline's direction) of sharpened stakes, leaning `lean`. */
+export function stakes(k, pts, { depth = 2, lean = 0.6 } = {}) {
+  const { r: R, props } = k;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [ax, az] = pts[i], [bx, bz] = pts[i + 1], Lg = Math.hypot(bx - ax, bz - az), ux = (bx - ax) / Lg, uz = (bz - az) / Lg;
+    for (let d = 0; d < Lg; d += 0.7) for (let e = 0; e < depth; e += 0.8) {
+      const x = ax + ux * d + uz * e + R.range(-0.2, 0.2), z = az + uz * d - ux * e + R.range(-0.2, 0.2), hh = R.range(0.9, 1.6), gy = k.topAt(x, z);
+      props.push({ s: [0.1, hh, 0.1], p: [x - uz * hh * 0.3, gy + hh * 0.42, z + ux * hh * 0.3], r: [ux * lean, 0, uz * lean], c: shade(0xa09a58, R.range(0.75, 1.05)) });
+    }
+  }
+}
+
+/** Kho thóc: a rice barn raised on six stilts (wooden discs keep the rats off), woven bamboo walls, a deep thatch. */
+export function granary(k, x, z, yaw = 0, s = 1) {
+  const gy = k.ground(x, z), L = k.local(x, gy, z, yaw), R = k.r, W = 5 * s, D = 6.5 * s, FH = 1.5 * s;
+  for (const px of [-1, 1]) for (const pz of [-1, 0, 1]) {
+    L(px * (W / 2 - 0.3), FH / 2, pz * (D / 2 - 0.4), [0.34, FH, 0.34], 0x4a3624);
+    L(px * (W / 2 - 0.3), FH * 0.62, pz * (D / 2 - 0.4), [0.7, 0.08, 0.7], 0x6a5038);              // rat guard
+  }
+  L(0, FH + 0.1, 0, [W + 0.3, 0.22, D + 0.3], 0x5e4430);
+  L(0, FH + 1.2 * s, 0, [W, 2.2 * s, D], shade(0xae9460, R.range(0.92, 1.05)));                      // woven walls
+  for (let q = -2; q <= 2; q++) L(q * W / 5, FH + 1.2 * s, 0, [0.06, 2.2 * s, D + 0.04], 0x7a6440);   // wall battens
+  L(0, FH + 0.9 * s, -D / 2 - 0.04, [1.2 * s, 1.5 * s, 0.08], 0x3a2a1a);                            // hatch
+  thatch(L, W + 1.8 * s, D + 2 * s, FH + 2.3 * s, 3.2 * s, 0xa88e52);
+  for (let q = 0; q < 3; q++) L(R.range(-W / 2, W / 2), 0.3, -D / 2 - R.range(0.6, 1.4), [0.8, 0.6, 0.6], shade(0xc8b080, R.range(0.85, 1.05)));   // rice sacks
+}
+
+/** Dinh: a warlord's hall on a stone-faced terrace (h), red columns, a long curved roof of dark tile with dragon-tail
+ *  ridge ends, a flight of steps on its front (−local z). w × d: the terrace. */
+export function longHall(k, x, z, yaw = 0, { w = 22, d = 12, h = 0.9 } = {}) {
+  const gy = k.ground(x, z), L = k.local(x, gy, z, yaw), RED = 0x8a2418, RD = 0x5a160e;
+  L(0, h / 2, 0, [w, h, d], 0x7a7066); L(0, h - 0.04, 0, [w + 0.2, 0.1, d + 0.2], 0x9a8e80);         // terrace + coping
+  for (let q = 0; q < 3; q++) L(0, (h / 3) * (q + 0.5), -d / 2 - 0.45 * (3 - q), [6, (h / 3) * (q + 1), 0.45], shade(0x6a6058, 1 + q * 0.03));   // steps
+  const CW = w - 3, CD = d - 3, top = h + 4.2;
+  for (let i = 0; i <= 6; i++) for (const sz of [-1, 1]) L(-CW / 2 + (CW / 6) * i, h + 2.1, sz * CD / 2, [0.42, 4.2, 0.42], RED);
+  for (const sx of [-1, 1]) for (const zz of [-CD / 6, CD / 6]) L(sx * CW / 2, h + 2.1, zz, [0.42, 4.2, 0.42], RED);
+  L(0, h + 1.9, CD / 2 - 0.3, [CW, 3.8, 0.2], 0x6a4a30);                                              // back wall
+  for (const sx of [-1, 1]) L(sx * (CW / 2 - 0.2), h + 1.9, 0, [0.2, 3.8, CD], 0x6a4a30);
+  for (let i = 0; i < 6; i++) L(-CW / 2 + (CW / 6) * (i + 0.5), h + 1.9, -CD / 2 + 0.6, [CW / 6 - 0.6, 3.4, 0.14], i === 2 || i === 3 ? 0x2a1a10 : 0x7a5638);   // lattice doors, two open
+  L(0, top - 0.2, -CD / 2, [CW + 0.6, 0.4, 0.4], RD); L(0, top - 0.2, CD / 2, [CW + 0.6, 0.4, 0.4], RD);   // eave beams
+  L(0, top + 0.6, -CD / 2 - 0.3, [3.2, 0.9, 0.1], 0x2a1a10); L(0, top + 0.6, -CD / 2 - 0.36, [2.6, 0.6, 0.04], 0xc8a050);   // name board
+  tileRoof(L, w + 3, d + 3.5, top, 3.6, 0x3a3230);
+  for (const sx of [-1, 1]) {                                                                        // curled dragon-tail ridge ends
+    L(sx * (w + 3) * 0.17, top + 4.25, 0, [0.5, 1.2, 0.5], 0x5a4a40, [0, 0, sx * -0.5]);
+    L(sx * (w + 3) * 0.2, top + 4.85, 0, [0.4, 0.6, 0.4], 0xc8a050, [0, 0, sx * 0.4]);
+  }
+}
+
+/** A timber gatehouse astride a w m opening: two pairs of posts, a lintel, a railed watch room and a thatch roof. */
+export function gateTower(k, x, z, yaw = 0, w = 9, { h = 6 } = {}) {
+  const gy = k.ground(x, z), L = k.local(x, gy, z, yaw), W = 0x4a3020, D = 0x2e1d14;
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) L(sx * (w / 2 + 0.5), h / 2, sz * 1.6, [0.7, h, 0.7], W);
+  for (const sx of [-1, 1]) for (const yy of [h * 0.35, h * 0.7]) L(sx * (w / 2 + 0.5), yy, 0, [0.3, 0.3, 3.4], D);
+  L(0, h, 0, [w + 2.4, 0.6, 4], D);                                                                  // lintel / floor
+  for (const sz of [-1, 1]) L(0, h + 0.8, sz * 1.9, [w + 2.4, 0.16, 0.16], W);                         // rails
+  for (let i = 0; i <= 8; i++) for (const sz of [-1, 1]) L(-(w + 2.2) / 2 + (w + 2.2) / 8 * i, h + 0.65, sz * 1.9, [0.14, 1.0, 0.14], W);
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) L(sx * (w / 2 + 0.6), h + 1.7, sz * 1.6, [0.3, 2.8, 0.3], W);
+  thatch(L, w + 4.4, 5.4, h + 3, 2.6, 0x9a8250);
+}
+
+/** Bến: a plank landing stage on piles, len m along local z from (x, z), the deck y above the water / ground. */
+export function jetty(k, x, z, yaw = 0, len = 14, { w = 2.6, y = 0.25 } = {}) {
+  const L = k.local(x, 0, z, yaw), R = k.r;
+  for (let d = 0; d < len; d += 0.55) L(0, y, d, [w * R.range(0.95, 1.05), 0.12, 0.48], shade(0x7a5a3a, R.range(0.75, 1.05)), [0, R.range(-0.03, 0.03), 0]);
+  for (let d = 0.4; d < len; d += 2.6) for (const sx of [-1, 1]) L(sx * (w / 2 - 0.1), y - 1.3, d, [0.24, 3.2, 0.24], 0x3a2a1c);
+  for (const sx of [-1, 1]) L(sx * (w / 2 - 0.1), y + 0.65, len - 0.5, [0.2, 1.4, 0.2], 0x4a3424);  // mooring posts
+}
+
+/** Trâu: a grey water buffalo with swept-back horns, standing or grazing (head down). */
+export function buffalo(k, x, z, yaw = 0, s = 1) {
+  const gy = k.ground(x, z), L = k.local(x, gy, z, yaw), C = shade(0x4a4648, k.r.range(0.85, 1.1)), graze = k.r.chance(0.5);
+  L(0, 1.05 * s, 0, [1.1 * s, 0.9 * s, 2.2 * s], C); L(0, 1.4 * s, -0.4 * s, [1.0 * s, 0.4 * s, 0.9 * s], C);
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) L(sx * 0.35 * s, 0.35 * s, sz * 0.75 * s, [0.24 * s, 0.7 * s, 0.24 * s], shade(C, 0.8));
+  const hy = graze ? 0.55 : 1.2, hz = graze ? 1.45 : 1.35;
+  L(0, hy * s, hz * s, [0.62 * s, 0.6 * s, 0.8 * s], C, [graze ? 0.6 : 0, 0, 0]);
+  for (const sx of [-1, 1]) {
+    L(sx * 0.45 * s, (hy + 0.35) * s, (hz - 0.2) * s, [0.7 * s, 0.14 * s, 0.14 * s], 0xd8ccb0, [0, sx * 0.3, sx * 0.4]);
+    L(sx * 0.75 * s, (hy + 0.5) * s, (hz - 0.45) * s, [0.14 * s, 0.14 * s, 0.5 * s], 0xd8ccb0, [0.5, 0, 0]);
+  }
+  L(0, 1.0 * s, -1.2 * s, [0.08, 0.8 * s, 0.08], shade(C, 0.7), [0.3, 0, 0]);                         // tail
+}
+
+/** Bụi chuối: three or four broad-leafed stems and a hanging bunch (stands on topAt). */
+export function banana(k, x, z, s = 1) {
+  const gy = k.topAt(x, z), R = k.r, { props } = k;
+  for (let q = 0, N = R.int(3, 4); q < N; q++) {
+    const px = x + R.range(-0.8, 0.8), pz = z + R.range(-0.8, 0.8), h = R.range(2.4, 3.6) * s;
+    props.push({ s: [0.32 * s, h, 0.32 * s], p: [px, gy + h / 2, pz], c: shade(0x6a7a3a, R.range(0.85, 1.05)) });
+    for (let l = 0; l < 5; l++) {
+      const a = R.range(0, TAU), ln = R.range(1.6, 2.4) * s;
+      props.push({ s: [0.7 * s, 0.06, ln], p: [px + Math.sin(a) * ln * 0.45, gy + h - 0.1, pz + Math.cos(a) * ln * 0.45], r: [-R.range(0.2, 0.6), a, 0], c: shade(R.chance(0.2) ? 0x8a7a3a : 0x4e8a34, R.range(0.8, 1.1)) });
+    }
+  }
+  props.push({ s: [0.4 * s, 0.7 * s, 0.4 * s], p: [x + 0.4, gy + 2.0 * s, z], c: 0x6a8a2a });
+}
+
+/** Đó: a conical bamboo fish trap at (x, y, z) and a net drying between two poles beside it. */
+export function fishTrap(k, x, y, z, yaw = 0) {
+  const L = k.local(x, y, z, yaw);
+  for (let i = 0; i < 4; i++) L(0, 0.3, i * 0.32, [0.75 - i * 0.15, 0.6 - i * 0.1, 0.34], shade(0xa08a52, 1 - i * 0.05));
+  for (const sx of [-1, 1]) L(1.4 + sx * 1.2, 1.1, -1, [0.1, 2.2, 0.1], 0x4a3424);
+  L(1.4, 1.4, -1, [2.4, 1.3, 0.04], 0x6a6250); L(1.4, 2.05, -1, [2.6, 0.06, 0.06], 0x4a3424);
+}
