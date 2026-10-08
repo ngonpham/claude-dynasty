@@ -408,3 +408,98 @@ export function dongSonHouse(out, x, y, z, yaw = 0, s = 1, { roof = 0x8a7448, wo
     L(0, R0 + 1.2 * s, sz * (D / 2 + 0.2), [W * 0.6, 2.2 * s, 0.14], shade(wall, 0.8));      // gable screen
   }
 }
+
+// ================================================================ Đỗ Động Giang (ch. III) — appended block
+// Marsh-siege dressing for suquan/src/world/maps/dodong.js (any field may use them). Same rules as above: k.props boxes,
+// draws from k.r in call order, render only (solid ones on walkable ground need a def.props footprint).
+//   chong(k, rect, o)            chông tre: sharpened bamboo stakes driven slantwise into mud / shallows, leaning toward
+//                                -Z turned by o.yaw (o = { n = 40, h = 1.6, lean = 0.55, yaw = 0, y })
+//   mantlet(k, x, z, yaw, s)     a woven bamboo siege screen propped on two legs (the Đinh siege lines; faces -Z by yaw)
+//   ruinedStiltHouse(k, x, z, yaw, s)   nhà sàn cháy: charred piles, a sagging floor, a half-fallen roof frame
+//   timberHall(k, x, z, yaw, s)  the warlord's hall: earth plinth, red-brown columns, plank walls, two tiers of dark tile
+//   gateHouse(k, x, z, yaw, o)   a timber gate tower over a rampart gap: two post towers, a railed gallery and a roof
+//                                spanning the gap (o = { gap = 11, h = 5, s = 1 }); the doors are the map's own
+//   stump(k, x, z, s)            a charred dead tree on scorched ground (bare limbs)
+export function chong(k, [x0, z0, x1, z1], { n = 40, h = 1.6, lean = 0.55, yaw = 0, y } = {}) {
+  const { r: R, props } = k;
+  for (let i = 0; i < n; i++) {
+    const x = R.range(x0, x1), z = R.range(z0, z1), gy = y ?? k.ground(x, z), hh = h * R.range(0.7, 1.2), a = yaw + R.range(-0.25, 0.25);
+    const t = lean + R.range(-0.15, 0.15), dx = -Math.sin(a) * Math.sin(t) * hh / 2, dz = -Math.cos(a) * Math.sin(t) * hh / 2;
+    props.push({ s: [0.12, hh, 0.12], p: [x + dx, gy + Math.cos(t) * hh / 2 - 0.2, z + dz], r: [-t, a, 0], c: shade(R.chance(0.3) ? 0x9a9450 : 0x6e7a3a, R.range(0.75, 1.05)) });
+    props.push({ s: [0.07, 0.3, 0.07], p: [x + dx * 2.05, gy + Math.cos(t) * hh - 0.18, z + dz * 2.05], r: [-t, a, 0], c: 0xcabb80 });   // cut point
+  }
+}
+
+export function mantlet(k, x, z, yaw = 0, s = 1) {
+  const L = k.local(x, k.ground(x, z), z, yaw), R = k.r, W = 3.2 * s, H = 2.3 * s;
+  for (const sx of [-1, 1]) {
+    L(sx * W * 0.42, H * 0.5, 0.35 * s, [0.14, H * 1.05, 0.14], 0x3e2c1e, [0.28, 0, 0]);                  // frame posts, leaning back
+    L(sx * W * 0.42, 0.55 * s, 0.95 * s, [0.12, 0.12, 1.5 * s], 0x3a2818, [-0.55, 0, 0]);                   // props behind
+  }
+  for (let i = 0; i < 9; i++) {                                                                            // woven strips
+    const y = 0.25 * s + i * H / 9;
+    L(0, y, 0.35 * s + y * 0.28, [W, H / 9 + 0.02, 0.12], shade(i % 2 ? 0x8a7a48 : 0x6e6438, R.range(0.8, 1.1)), [0.28, 0, 0]);
+  }
+  if (R.chance(0.5)) for (let q = 0, N = R.int(2, 6); q < N; q++)                                          // arrows stuck in it
+    L(R.range(-W * 0.4, W * 0.4), R.range(0.6, H) * s, 0.1, [0.03, 0.03, 0.8], 0x4a3524, [R.range(-0.2, 0.2), R.range(-0.3, 0.3), 0]);
+}
+
+export function ruinedStiltHouse(k, x, z, yaw = 0, s = 1) {
+  const gy = k.topAt(x, z), L = k.local(x, gy, z, yaw), R = k.r;
+  const W = 6 * s, D = 9 * s, FH = 1.8 * s, CH = 0x1e1612, CH2 = 0x2c2018;
+  for (const px of [-1, 0, 1]) for (const pz of [-1, -0.33, 0.33, 1]) {
+    const hh = FH * R.range(0.55, 1.05);
+    L(px * (W / 2 - 0.3), hh / 2, pz * (D / 2 - 0.3), [0.3 * s, hh, 0.3 * s], R.chance(0.5) ? CH : CH2, [R.range(-0.1, 0.1), 0, R.range(-0.12, 0.12)]);
+  }
+  L(-W * 0.15, FH * 0.6, 0, [W * 0.8, 0.2, D * 0.9], CH2, [0.18, 0, 0.22]);                              // floor, caved in
+  for (let i = 0; i < 6; i++) L(R.range(-W / 2, W / 2), FH + R.range(0.3, 1.4), R.range(-D / 2, D / 2), [0.16, R.range(1, 2.4) * s, 0.16], CH, [R.range(-0.5, 0.5), 0, R.range(-0.5, 0.5)]);   // posts
+  L(W * 0.15, FH + 1.6 * s, D * 0.1, [0.2, 0.2, D * 0.85], CH, [0, 0, 0.5]);                                 // ridge beam, slumped
+  for (let i = 0; i < 5; i++) L(R.range(-W * 0.4, W * 0.4), FH + R.range(0.6, 1.8) * s, -D / 2 + i * D / 4, [W * 0.7, 0.12, 0.12], CH2, [0, 0, R.range(-0.6, 0.6)]);   // rafters
+  L(-W * 0.3, FH + 1.0 * s, D * 0.25, [W * 0.6, 0.35, D * 0.45], shade(0x4a3e2a, 0.8), [0.2, 0, 0.6]);      // a sodden flap of thatch
+  for (let i = 0; i < 8; i++) L(R.range(-W, W) * 0.6, 0.12, R.range(-D, D) * 0.6, [R.range(0.6, 1.4), 0.2, 0.3], CH, [0, R.range(0, 3), 0]);   // fallen timbers
+}
+
+export function timberHall(k, x, z, yaw = 0, s = 1) {
+  const gy = k.topAt(x, z), L = k.local(x, gy, z, yaw), R = k.r, W = 15 * s, D = 9 * s, P = 1.0 * s, CH = 4.2 * s;
+  L(0, P / 2, 0, [W + 1.6, P, D + 1.6], 0x6a5440);                                                         // rammed-earth plinth
+  L(0, P + 0.03, 0, [W + 1.4, 0.08, D + 1.4], 0x7a6a56);
+  for (let q = 0; q < 3; q++) L(0, (q + 1) * P / 3 / 2, -D / 2 - 0.8 - (2 - q) * 0.45, [4.4 * s, (q + 1) * P / 3, 0.45], shade(0x6a5440, 1 + q * 0.04));   // front steps
+  for (let i = 0; i <= 5; i++) for (const sz of [-1, 1]) L(-W / 2 + i * W / 5, P + CH / 2, sz * D / 2, [0.42 * s, CH, 0.42 * s], 0x5a2416);   // columns
+  for (const sx of [-1, 1]) L(sx * W / 2, P + CH / 2, 0, [0.42 * s, CH, D], 0x5a2416);
+  for (let i = 0; i < 5; i++) if (i !== 2) L(-W / 2 + (i + 0.5) * W / 5, P + CH * 0.42, -D / 2 + 0.25, [W / 5 - 0.5, CH * 0.84, 0.12], shade(0x4a3424, R.range(0.85, 1.05)));   // plank walls (open middle bay)
+  L(0, P + CH * 0.42, D / 2 - 0.2, [W - 0.4, CH * 0.84, 0.12], 0x3e2c1e);
+  for (const sx of [-1, 1]) L(sx * (W / 2 - 0.2), P + CH * 0.42, 0, [0.12, CH * 0.84, D - 0.4], 0x3e2c1e);
+  L(0, P + CH * 0.42, -D / 2 + 1.6, [W / 5 - 0.6, CH * 0.84, 0.1], 0x2a1a10);                              // the dark hall behind the open bay
+  L(0, P + CH + 0.2, 0, [W + 0.6, 0.4, D + 0.6], 0x4a2a18);                                                 // architrave
+  tileRoof(L, W + 4 * s, D + 4.4 * s, P + CH + 0.35, 2.4 * s, 0x2e2a2c);                                    // lower tier
+  for (const sx of [-1, 1]) L(sx * (W * 0.32), P + CH + 2.8 * s, 0, [0.3, 0.9 * s, 0.3], 0x4a2a18);          // posts of the upper tier
+  L(0, P + CH + 3.0 * s, 0, [W * 0.66, 0.9 * s, D * 0.5], 0x3e2c1e);
+  tileRoof(L, W * 0.78, D * 0.72, P + CH + 3.4 * s, 2.2 * s, 0x34302e);                                     // upper tier
+  L(0, P + CH + 2.2 * s, -D / 2 - 1.9 * s, [3.2 * s, 1.0 * s, 0.12], 0x1a1210);                             // name board (blank lacquer)
+  L(0, P + CH + 2.2 * s, -D / 2 - 1.95 * s, [2.8 * s, 0.7 * s, 0.05], 0x8a6a2a);
+}
+
+export function gateHouse(k, x, z, yaw = 0, { gap = 11, h = 5, s = 1 } = {}) {
+  const gy = k.ground(x, z), L = k.local(x, gy, z, yaw), R = k.r, T = gap / 2 + 1.7 * s, TH = h + 4.2 * s;
+  for (const sx of [-1, 1]) {
+    for (const [px, pz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) L(sx * T + px * 1.5 * s, TH / 2, pz * 1.6 * s, [0.42 * s, TH, 0.42 * s], 0x3a2618);   // tower posts
+    for (const y of [1.6, h + 0.1]) L(sx * T, y, 0, [3.4 * s, 0.25, 3.6 * s], 0x4a3020);                    // floors
+    for (let q = 0; q < 5; q++) L(sx * T, h + 0.6 + q * 0.28, -1.75 * s, [3.3 * s, 0.24, 0.12], shade(0x6e6034, R.range(0.85, 1.05)));   // woven breastwork
+    thatch((lx, ly, lz, sz, c, rr) => L(lx + sx * T, ly, lz, sz, c, rr), 4.6 * s, 4.8 * s, TH, 2.0 * s, 0x6e6044);
+  }
+  L(0, h + 0.15, 0, [gap + 3.4 * s, 0.3, 3 * s], 0x4a3020);                                                // gallery deck over the gap
+  for (const sz of [-1, 1]) L(0, h + 1.15, sz * 1.4 * s, [gap + 3.4 * s, 0.14, 0.14], 0x6a2418);           // rails
+  for (let q = -3; q <= 3; q++) L(q * gap / 7, h + 0.7, -1.4 * s, [0.14, 0.9, 0.14], 0x5a2016);
+  L(0, h - 0.25, -1.45 * s, [gap + 2.6 * s, 0.6, 0.5], 0x3a2618);                                          // lintel beam
+  tileRoof(L, gap + 5 * s, 4.2 * s, h + 2.6 * s, 1.6 * s, 0x2e2a2c);                                         // the gallery roof
+  for (const sx of [-1, 1]) L(sx * (gap / 2 + 0.2), h + 1.9 * s, 0, [0.3, 1.6 * s, 0.3], 0x3a2618);
+}
+
+export function stump(k, x, z, s = 1) {
+  const gy = k.topAt(x, z), { r: R, props } = k, H = R.range(1.8, 4.5) * s;
+  props.push({ s: [0.7 * s, H, 0.7 * s], p: [x, gy + H / 2, z], r: [R.range(-0.1, 0.1), R.range(0, 3), R.range(-0.1, 0.1)], c: shade(0x1e1814, R.range(0.8, 1.2)) });
+  for (let q = 0, N = R.int(2, 4); q < N; q++) {
+    const a = R.range(0, TAU), l = R.range(1, 2.4) * s;
+    props.push({ s: [0.22 * s, l, 0.22 * s], p: [x + Math.sin(a) * l * 0.35, gy + H * R.range(0.6, 0.95) + l * 0.3, z + Math.cos(a) * l * 0.35], r: [Math.cos(a) * 0.7, 0, -Math.sin(a) * 0.7], c: 0x241c16 });
+  }
+}
