@@ -19,7 +19,7 @@ export const C = {
   skin: 0xc08a62, skinD: 0x936242, skinH: 0xd8a47a, lip: 0x8e4c3a, eye: 0x120a08, iris: 0x2e1c10, scl: 0xece2d0,
   hair: 0x0e0b0a, hairH: 0x28201c,
   ink: 0x1e2e5a, inkL: 0x34508a,                                       // tattoo blue
-  indigo: 0x26326a, indigoD: 0x161e44, indigoL: 0x485a98, fade: 0x6a78a8,
+  indigo: 0x26326a, indigoD: 0x1c2654, indigoL: 0x34428a, fade: 0x6a78a8,
   rope: 0xb89a62, ropeD: 0x7e6638,
   wrapC: 0x8a96a4, wrapD: 0x5e6a7a,
   jade: 0x3aa078, jadeL: 0x7ad0a4,
@@ -138,12 +138,11 @@ function head() {
     B([-7, 13, -7], [8, 16, 6], (x, y, z) => (z > 4 && y === 13 ? null : hair(x, y, z))),
     B([-6, 16, -6], [7, 18, 5], top),
     ...symH(6, 8, 9, 14, -3, 3, C.hair, false),
-    P([-6, 12, 5], [7, 13, 6], (x) => (md(x, 3) === 0 ? C.hair : null)),
     ...symH(7, 8, 6, 10, -1, 2, C.skin, false), ...symH(7, 8, 7, 9, 0, 1, C.skinD),
     // thick straight brows, steady eyes (white, the iris, the lid), a strong nose, a set mouth
-    ...symH(1, 6, 10, 12, 5, 7, C.hair, false),
+    ...symH(1, 6, 11, 12, 5, 7, C.hair, false), ...symH(1, 4, 12, 13, 5, 6, C.hair, false),
     ...symH(2, 5, 7, 9, 5, 6, C.scl), ...symH(2, 4, 7, 9, 5, 6, C.iris), ...symH(2, 3, 7, 9, 5, 6, C.eye),
-    ...symH(2, 6, 9, 10, 5, 6, C.eye),
+    ...symH(2, 5, 9, 10, 5, 6, C.eye),
     B([-1, 5, 6], [2, 9, 8], C.skinH), B([-1, 4, 6], [2, 5, 8], C.skin), P([-1, 4, 7], [0, 5, 8], C.skinD), P([1, 4, 7], [2, 5, 8], C.skinD),
     P([-2, 3, 5], [3, 4, 6], C.lip),
   ];

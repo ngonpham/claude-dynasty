@@ -194,7 +194,7 @@ export const BEATS = [
   // ---- the turn (ch. 13 p5): the empty coffin set down behind him, the riders coming up the ledge one by one
   {
     when: { at: ['motEnd', 0, 0] },
-    set: 'turn', heal: 0.2, hush: true,
+    set: 'turn', heal: 0.2,
     banner: { html: 'Đến cuối đèo, <em>quay ngựa lại</em>', en: 'At the end of the pass, he turns his horse around', dur: 190, big: true },
     defend: { key: 'quan', at: ['quan', 0, 0], r: 5, hp: 1800, name: { zh: 'Cỗ quan rỗng', en: 'The Empty Coffin' } },
     fail: { when: { hp: ['quan', 0.01] }, zh: 'Kỵ binh đã cướp được cờ vàng……', en: 'The riders have taken the yellow banner...' },
@@ -505,8 +505,8 @@ export const PROLOGUE = [
   { cols: ['紫旗追騎', '尾隨不捨', '其志在人'], vi: 'Kỵ binh truy sát bám theo, cờ hiệu tím. Kẻ phản bội biết người từng hàng sẽ được giao tuyến khó đoán nhất.',
     en: 'The hunters\' riders close in under purple signal flags. The traitor knew the yielded man would be given the hardest road to guess.',
     show: ['riders'], focus: [440, 680, 1.22] },
-  { cols: ['嶺上烽臺', '一騎之途', '殘陽如血'], vi: 'Trên đỉnh đèo có một đài lửa hiệu, và một con đường chỉ đủ một ngựa. Mặt trời lặn đỏ như máu.',
-    en: 'On the crest stands a signal beacon, and a path wide enough for one horse. The sun goes down red.',
+  { cols: ['嶺上烽臺', '一騎之途', '落日如火'], vi: 'Trên đỉnh đèo có một đài lửa hiệu, và một con đường chỉ đủ một ngựa. Mặt trời lặn đỏ như lửa.',
+    en: 'On the crest stands a signal beacon, and a path wide enough for one horse. The sun goes down like fire.',
     show: ['pass', 'beacon'], focus: [820, 520, 1.26] },
   { cols: ['嶺外有湖', '湖畔有洞', '月照幽穴'], vi: 'Bên kia đèo là thung hồ dưới trăng, và một hang tối. Hai nửa thẻ đồng vẫn chưa ghép lại.',
     en: 'Beyond the pass lies a lake basin under the moon, and a dark cave. The two halves of a bronze token have not yet been put together.',

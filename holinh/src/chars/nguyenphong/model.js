@@ -22,8 +22,8 @@ export const HV = 0.013;
 export const C = {
   skin: 0xc8946c, skinD: 0x9c6a48, skinH: 0xdcaa82, lip: 0x9a5444, eye: 0x120a08, iris: 0x3a2412, scl: 0xefe4d2,
   hair: 0x110d0b, hairH: 0x2e2420,
-  moss: 0x587a36, mossD: 0x3a5424, mossL: 0x789a4c,                    // moss-green over-tunic, scarf
-  earth: 0x6c4a2e, earthD: 0x48301c, earthL: 0x8a6440,                 // earth-brown under-tunic, trousers
+  moss: 0x587a36, mossD: 0x48662c, mossL: 0x668a40,                    // moss-green over-tunic, scarf
+  earth: 0x6c4a2e, earthD: 0x5a3c24, earthL: 0x7a5636,                 // earth-brown under-tunic, trousers
   hide: 0x5c3c24, hideD: 0x3a2414, hideL: 0x7e5634,                    // leather
   wrap: 0x7a7050, wrapD: 0x575036,
   straw: 0xc8a85e, strawD: 0x94783c,
@@ -126,7 +126,7 @@ function head() {
     return hair(x, y, z);
   };
   // ragged bangs: each column over the brow falls to its own length
-  const bangs = (x, y) => (y < 12 - Math.floor(hash01(x + 7, 2, 9) * 3) - (md(x, 3) === 0 ? 1 : 0) ? null : hair(x, y, 6));
+  const bangs = (x, y) => (y < 13 - Math.floor(hash01(x + 7, 2, 9) * 2) - (md(x, 3) === 0 ? 1 : 0) ? null : hair(x, y, 6));
   return [
     // a lean young face, a firm but narrow jaw
     B([-6, 3, -6], [7, 14, 6], C.skin),
@@ -143,8 +143,7 @@ function head() {
     ...symH(2, 5, 7, 9, 5, 6, C.scl), ...symH(2, 4, 7, 9, 5, 6, C.iris), ...symH(2, 3, 7, 9, 5, 6, C.eye),
     ...symH(2, 6, 9, 10, 5, 6, C.eye),
     B([-1, 5, 6], [2, 9, 7], C.skinH), P([-1, 4, 5], [0, 5, 7], C.skinD), P([1, 4, 5], [2, 5, 7], C.skinD),
-    P([-2, 3, 5], [2, 4, 6], C.lip), P([2, 3, 5], [3, 4, 6], C.skinD), P([-3, 3, 5], [-2, 4, 6], C.skinD),
-    P([2, 4, 5], [4, 5, 6], C.lip),
+    P([-1, 3, 5], [2, 4, 6], C.lip), P([2, 4, 5], [3, 5, 6], C.lip), P([-2, 3, 5], [-1, 4, 6], C.skinD),
     // the half-up knot at the back of the crown, bound with a leather thong
     B([-2, 17, -6], [3, 22, -1], hair), B([-3, 17, -7], [4, 19, 0], (x, y, z) => (md(x + z, 2) ? C.hide : C.hideL)),
     B([-1, 22, -5], [2, 23, -2], hair),

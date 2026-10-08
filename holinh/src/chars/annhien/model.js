@@ -116,7 +116,7 @@ function head() {
     // an oval face, a narrow soft jaw, a small pointed chin
     B([-6, 3, -6], [7, 15, 6], C.skin),
     B([-5, 1, -4], [6, 3, 5], C.skin), B([-3, 0, -2], [4, 1, 5], C.skin), B([-6, 3, -5], [7, 5, 6], C.skin),
-    ...symH(4, 6, 4, 6, 5, 6, C.blush), ...symH(5, 6, 1, 3, 3, 5, C.skinD),
+    ...symH(4, 6, 5, 6, 5, 6, C.blush), ...symH(5, 6, 1, 3, 3, 5, C.skinD),
     // hair: back of the head down to the nape, over the crown above the band (centre-parted), long locks framing the
     // cheeks; ears half hidden
     B([-7, 2, -7], [8, 19, -2], hair),
@@ -187,10 +187,10 @@ const braid = (i, n) => {
 };
 /** Reed-flower strand: soft pale fluff, every (x, z) column its own white, the tip thinning to wisps. */
 const reed = (i, n) => {
-  const w = i === n - 1 ? 1 : 2, last = i === n - 1;
+  const w = 1, last = i === n - 1;
   return vox([B([-w, -6, -w], [w, 0, w], (x, y, z) => {
     const k = hash01(x + 9, z + 9 + i * 3, y + 20);
-    if (k < (last ? 0.45 : 0.18)) return null;
+    if (k < (last ? 0.5 : 0.22)) return null;
     return k > 0.82 ? C.reedD : k > 0.5 ? C.reedH : C.reed;
   })], 0.012, { jitter: 0.08, ao: 0.15 });
 };
@@ -220,9 +220,9 @@ export const ANNHIEN_DEF = {
       ...[-1, 1].map((sx) => ({ joint: 'head', anchor: [sx * 1.5 * HV, 14.5 * HV, -9 * HV], rest: [sx * 0.3, -0.7, -1], n: 4, len: 0.07,
         stiff: 0.04, drag: 0.07, wind: 2.2, cone: 110, sway: 0.55, face: [0, 0, -1], seg: tail, hit: ['head', ['chest', 0.03]] })),
       // bông lau: the small white reed plume under the socket, light and floating
-      ...Array.from({ length: 6 }, (_, k) => {
-        const a = k * 1.0472, ox = Math.cos(a) * 0.016, oy = Math.sin(a) * 0.016;
-        return { joint: 'weapon', anchor: [ox, oy, 1.44], rest: [ox * 14, oy * 6 - 1, -0.5], n: 3, len: 0.06, stiff: 0.04 + k * 0.004, drag: 0.1, wind: 1.6,
+      ...Array.from({ length: 5 }, (_, k) => {
+        const a = k * 1.2566, ox = Math.cos(a) * 0.012, oy = Math.sin(a) * 0.012;
+        return { joint: 'weapon', anchor: [ox, oy, 1.45], rest: [ox * 14, oy * 6 - 1, -0.5], n: 2, len: 0.055, stiff: 0.04 + k * 0.004, drag: 0.1, wind: 1.6,
           grav: 0.6, cone: 140, sway: 0.3, face: [1, 0, 0], seg: reed };
       }),
     ];
