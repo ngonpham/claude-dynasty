@@ -1,7 +1,7 @@
-// lehoan: the officer entry (contract: src/chars/index.js header). PLACEHOLDER kit and portrait: the engine's
-// LIUBEI_KIT until this officer's own model / kit lands in this folder (model.js, kit.js).
-import { LIUBEI_KIT } from '../../../../src/chars/liubei/kit.js';
-import { FACE, PAL } from '../../../../src/chars/liubei/model.js';
+// lehoan: the officer entry (contract: src/chars/index.js header). Kit: kit.js (Liu Bei's twin-sword moveset on his own
+// model and look); model, portrait: model.js.
+import { LEHOAN_KIT } from './kit.js';
+import { FACE, PAL } from './model.js';
 
 export const CHAR = {
     id: 'lehoan', side: { zh: 'Nhà Đinh', en: 'Đinh' },
@@ -21,5 +21,5 @@ export const CHAR = {
       copy: ['雙劍破陣', '十道歸心'],
     },
     portrait: { face: FACE, pal: PAL },
-    kit: LIUBEI_KIT,
+    kit: LEHOAN_KIT,
 };

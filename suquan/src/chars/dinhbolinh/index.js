@@ -1,7 +1,7 @@
-// dinhbolinh: the officer entry (contract: src/chars/index.js header). PLACEHOLDER kit and portrait: the engine's
-// ZHAOYUN_KIT until this officer's own model / kit lands in this folder (model.js, kit.js).
-import { ZHAOYUN_KIT } from '../../../../src/chars/zhaoyun/kit.js';
-import { FACE, PAL } from '../../../../src/chars/liubei/model.js';
+// dinhbolinh: the officer entry (contract: src/chars/index.js header). Kit: kit.js (Zhao Yun's spear moveset on his own
+// model and look); model, portrait: model.js.
+import { DINHBOLINH_KIT } from './kit.js';
+import { FACE, PAL } from './model.js';
 
 export const CHAR = {
     id: 'dinhbolinh', side: { zh: 'Nhà Đinh', en: 'Đinh' },
@@ -18,8 +18,8 @@ export const CHAR = {
     lines: {
       intro: { zh: 'Ta là Đinh Bộ Lĩnh đất Hoa Lư! Kẻ nào dám cản đường thống nhất?', en: 'I am Đinh Bộ Lĩnh of Hoa Lư! Who dares stand in the way of one realm?' },
       musouEnd: { zh: 'Mười hai sứ quân, rồi cũng về một mối!', en: 'Twelve warlords — and all of them will come under one banner!' },
-      copy: ['旗蘆所指', '萬勝歸一'],
+      copy: ['蘆旗所指', '萬勝歸一'],
     },
     portrait: { face: FACE, pal: PAL },
-    kit: ZHAOYUN_KIT,
+    kit: DINHBOLINH_KIT,
 };
