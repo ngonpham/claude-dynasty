@@ -62,7 +62,7 @@ export function createResult(el, flow) {
         <div class="rs-body">
           <table class="rs-stats">${rows.map(([zh, en, , , old], i) => `<tr style="--i:${i}"><th>${zh}<small>${en}</small></th><td>0</td><td class="rs-new">${
             old ? `<b>Kỷ lục mới</b><small>${old}</small>` : ''}</td></tr>`).join('')}</table>
-          ${win && s.rank ? `<div class="rs-rank r${s.rank}"><span>Xếp hạng<small>RANK</small></span><b>${s.rank}</b>${R?.fresh.rank ? `<em>${was.rank} → ${s.rank} · nâng hạng</em>` : ''}</div>` : ''}
+          ${win && s.rank ? `<div class="rs-rank r${s.rank}"><span>Xếp hạng<small>RANK</small></span><b>${s.rank}</b>${R?.fresh.rank ? `<em>${was.rank} › ${s.rank} · nâng hạng</em>` : ''}</div>` : ''}
         </div>
         ${notices ? `<div class="rs-unlocks">${notices}</div>` : ''}
         <div class="rs-epi">${win
