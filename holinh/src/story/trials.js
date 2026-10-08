@@ -18,7 +18,7 @@ const surge = (n, d = 22) => Array.from({ length: n }, (_, k) => {
 // Thiên Nhân Trảm — offence: a thousand KOs against the clock (pacing as the engine's 千人斬: same waves, same gates).
 const thiennhan = {
   CH: {
-    id: 'thiennhan', num: NUM, title: { zh: 'Thiên Nhân Trảm', en: 'Thousand Slain' }, seal: '千人斬', map: 'quenthanh',
+    id: 'thiennhan', num: NUM, title: { zh: 'Thiên Nhân Trảm', en: 'Thousand Slain' }, seal: '千人斬', map: 'quenthanh', start: { x: 0, z: -96, yaw: 0 },
     army: { foe: 'suquan', ally: 'dinh' }, best: 'time',
     rule: { zh: 'Đánh tan một nghìn quân trong ba phút; càng nhanh càng cao hạng', en: 'Cut down 1,000 within 3:00. The faster, the higher the rank.' },
     rank: { kos: [1000, 1000, 1000], time: [90, 115, 150], s: { time: 99, dmg: 0.35 } },
@@ -43,7 +43,7 @@ const boss = (kit, hp, more) => ({ kit, role: 'boss', at: ['hero', 0, 16], hp, .
 const fodder = [{ at: ['hero', -11, 12], n: 14 }, { at: ['hero', 11, 12], n: 14 }];
 const baylo = {
   CH: {
-    id: 'baylo', num: NUM, title: { zh: 'Bảy Đường Truy Sát', en: 'The Seven Roads Hunted' }, seal: '七路', map: 'quenthanh',
+    id: 'baylo', num: NUM, title: { zh: 'Bảy Đường Truy Sát', en: 'The Seven Roads Hunted' }, seal: '七路', map: 'quenthanh', start: { x: 0, z: -96, yaw: 0 },
     army: { foe: 'phanthan', ally: 'holinh' }, best: 'time', van: [],
     rule: { zh: 'Liên tiếp đánh bại Hàng Tướng, Máu Lạnh, Hồng Diễm, Mặt Sẹo và Hoạn Quan; càng nhanh càng cao hạng',
       en: 'Five duels in a row: the Yielded General, Máu Lạnh, Hồng Diễm, Mặt Sẹo, the Eunuch. The faster, the higher the rank.' },
