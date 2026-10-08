@@ -942,7 +942,7 @@
   @keyframes rsStamp { from { opacity: 0; transform: scale(1.7) rotate(-6deg); } }
 
   /* =====================================================================================================================
-     十二使君 skin (ui lane): Vietnamese type over the engine's ink / brocade look. The rules above are the engine's layout;
+     護靈壯士 skin (shared with 十二使君) (ui lane): Vietnamese type over the engine's ink / brocade look. The rules above are the engine's layout;
      everything below re-sizes it for Latin text with diacritics (longer than Hán, taller stacks: line-heights ≥ 1.15,
      letter-spacing in em, no vertical writing for Latin) and adds the Vietnamese flavour: red lacquer + gold leaf, the
      bronze-drum sun ring (--drum: the 14-ray star and tick rings of a Đông Sơn drum face) behind seals and stamps.
@@ -953,7 +953,7 @@
   .ink-wait i { font-family: var(--han); }
   .ink-wait::before { content: ""; position: absolute; inset: 1.5rem; background: var(--drum) center / contain no-repeat; opacity: .28; }
 
-  /* ---- title: the logo (十二使君 seal on a drum ring + two gold-leaf lines), menu, tags */
+  /* ---- title: the logo (護靈壯士 seal on a drum ring + two gold-leaf lines), menu, tags */
   .t-logo { padding-left: 11rem; }
   .t-logo::before { content: ""; position: absolute; left: -4.2rem; top: -3rem; width: 20rem; height: 20rem; z-index: -1; pointer-events: none;
     background: var(--drum) center / contain no-repeat; opacity: .3; filter: drop-shadow(0 0 1.2rem rgba(242,193,78,.35)); }

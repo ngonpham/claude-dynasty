@@ -22,6 +22,13 @@
 > importmap swaps the content modules; the original game is untouched). Locally:
 > [localhost:8000/suquan/](http://localhost:8000/suquan/) · read [suquan/README.md](suquan/README.md) (tiếng Việt).
 
+> **New: 護靈壯士 · Hộ Linh Tráng Sĩ** — a third game on the same engine, six stages adapted from the comic script
+> «Hộ Linh Tráng Sĩ: Bí Ẩn Mộ Vua Đinh»: in 979, after Đinh Tiên Hoàng is murdered at Hoa Lư, seven guardians carry 99
+> identical coffins along seven roads so no one can find the true grave. Its own officers (An Nhiên, Nguyên Phong, Đinh
+> Khang, the Right and Left Generals, Shaman Mo Cun, the Yielded General), assassins, fields, stages and trials, built as
+> an overlay like 十二使君 (sharing its Vietnamese set-dressing and fonts). Locally:
+> [localhost:8000/holinh/](http://localhost:8000/holinh/) · read [holinh/README.md](holinh/README.md) (tiếng Việt).
+
 <p align="center"><b>7 officers</b> &nbsp; / &nbsp; <b>4 chapters</b> &nbsp; / &nbsp; <b>3 trials</b> &nbsp; / &nbsp; <b>4 difficulties</b></p>
 
 <p align="center">
