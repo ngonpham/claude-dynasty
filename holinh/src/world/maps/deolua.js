@@ -91,8 +91,9 @@ export default {
   ],
   // the east rock wall of the one-horse path (its piece is carved whole)
   carve: WALL_CARVE,
-  // solid set pieces: the beacon tower; the lake bowl (no rock grows in the water); the cell's pillar; the chamber's table
-  props: [[BEACON[0] - 2.6, BEACON[1] - 2.6, BEACON[0] + 2.6, BEACON[1] + 2.6], [-66, 94, -35.5, 130],
+  // solid set pieces: the beacon tower; the lake bowl (no rock grows in the water); the shoulder's lookout tower; the
+  // cell's pillar; the chamber's table
+  props: [[BEACON[0] - 2.6, BEACON[1] - 2.6, BEACON[0] + 2.6, BEACON[1] + 2.6], [-66, 94, -35.5, 130], [-18.6, -71.6, -15.4, -68.4],
     [CELL[0] + 1.2, CELL[1] - 1, CELL[0] + 3.2, CELL[1] + 1], [TRA[0] + 4, TRA[1] + 2, TRA[0] + 8, TRA[1] + 4.4]],
   zones: [
     { id: 'chan', name: { zh: 'Chân đèo', en: 'Foot of the Pass' }, x: 0, z: -186, w: 96, d: 56 },
@@ -265,7 +266,7 @@ export default {
     for (const [x, z] of [[16, 126], [27, 127]]) V.bambooTorch(k, x, z, { h: 3.2 });
     for (const [x, z] of [[11, 124], [31, 124]]) k.standard(x, z, 1.05, truy, 7.6, [20, 110]);
     k.troops('foe', [[17, 132.6], [20, 133], [24, 132.8], [27, 133.2]].map(([x, z], i) => ({ x, y: k.ground(x, z), z, yaw: Math.PI, ph: i * 1.7 })));
-    caveArch(k, -15, 127, 8.5, 7);
+    caveArch(k, -17, 127, 11, 7);
     for (let i = 0; i < 50; i++) {
       const x = r.range(-30, 34), z = r.range(86, 128), f = k.inAt(x, z);
       if (f > -0.8 || f < -6) continue;
@@ -400,7 +401,7 @@ function buildSet(root, k) {
   { const R = k.r;
     for (let i = 0; i < 12; i++) {
       const z = -35 + i * 2 + R.range(-0.6, 0.6), [cx, hw] = pathAt(z), x0 = cx + hw + R.range(1.0, 2.4), y0 = ground(cx, z) + R.range(1.2, 3.4), s = R.range(0.8, 1.4);
-      const rest = i % 4 === 1, x1 = rest ? cx - hw + R.range(0.2, 1.2) : cx - hw - R.range(14, 26);
+      const rest = i % 4 === 1, x1 = rest ? cx - hw - R.range(0.2, 0.8) : cx - hw - R.range(14, 26);
       const geo = boxesGeometry([{ s: [1.6 * s, 1.3 * s, 1.5 * s], p: [0, 0, 0], c: shade(0x8a8478, R.range(0.75, 1)) }, { s: [1.1 * s, 0.9 * s, 1.2 * s], p: [0.2 * s, 0.5 * s, 0.1 * s], c: shade(0x9a9488, R.range(0.8, 1)) }]);
       const m = new THREE.Mesh(geo, lit()); m.castShadow = true;
       m.position.set(x0, y0, z); root.add(m);

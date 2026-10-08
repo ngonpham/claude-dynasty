@@ -201,8 +201,8 @@ export function buildSet(root, k, def) {
     b.push({ s: [13.4, 2.0, 3.2], p: [0, DY + 7.6, DOOR_Z], c: shade(STONED, 1.05) }, { s: [12, 1.6, 2.4], p: [0, DY + 9.3, DOOR_Z + 0.4], c: shade(0x8a857a, 0.9) });
     for (let i = 0; i < 6; i++) b.push({ s: [0.3, R.range(2, 5), 0.2], p: [R.range(-6, 6), DY + R.range(2, 6), DOOR_Z - 1.62], c: 0x3e4c48 });   // seeps down the face
     mesh(b); }
-  const slab = mesh([{ s: [7.4, 6.4, 1.0], p: [0, 3.2, DOOR_Z + 0.2], c: shade(0x7a766c, 1) }, { s: [6.2, 0.2, 1.06], p: [0, 1.4, DOOR_Z + 0.2], c: 0x5a564e },
-    { s: [6.2, 0.2, 1.06], p: [0, 4.6, DOOR_Z + 0.2], c: 0x5a564e }, { s: [1.2, 1.2, 1.1], p: [0, 3.0, DOOR_Z + 0.2], c: 0x6a665c }], lit(), [0, DY, DOOR_Z]);
+  const slab = mesh([{ s: [7.4, 6.4, 1.0], p: [0, DY + 3.2, DOOR_Z + 0.2], c: shade(0x7a766c, 1) }, { s: [6.2, 0.2, 1.06], p: [0, DY + 1.4, DOOR_Z + 0.2], c: 0x5a564e },
+    { s: [6.2, 0.2, 1.06], p: [0, DY + 4.6, DOOR_Z + 0.2], c: 0x5a564e }, { s: [1.2, 1.2, 1.1], p: [0, DY + 3.0, DOOR_Z + 0.2], c: 0x6a665c }], lit(), [0, DY, DOOR_Z]);
   const SLAB_UP = 7.2;
   slab.position.y = DY + SLAB_UP;
 
@@ -221,8 +221,9 @@ export function buildSet(root, k, def) {
   for (const [x, z] of BOWLS) {
     const gy = k.ground(x, z);
     props.push({ s: [0.5, 1.1, 0.5], p: [x, gy + 0.55, z], c: 0x3a3438 }, { s: [1.2, 0.36, 1.2], p: [x, gy + 1.2, z], c: 0x4a4248 }, { s: [1.0, 0.1, 1.0], p: [x, gy + 1.4, z], c: 0x1a1018 });
-    const f = mesh([{ s: [0.5, 0.9, 0.5], p: [0, 0.45, 0], c: 0xc890ff }, { s: [0.3, 1.3, 0.3], p: [0.1, 0.65, -0.05], c: 0xe8c8ff }, { s: [0.22, 0.6, 0.22], p: [-0.18, 0.3, 0.12], c: 0x9a50f0 }],
-      glowMat(0xffffff, 2.2), [x, gy + 1.45, z]);
+    const y = gy + 1.45;
+    const f = mesh([{ s: [0.5, 0.9, 0.5], p: [x, y + 0.45, z], c: 0xc890ff }, { s: [0.3, 1.3, 0.3], p: [x + 0.1, y + 0.65, z - 0.05], c: 0xe8c8ff }, { s: [0.22, 0.6, 0.22], p: [x - 0.18, y + 0.3, z + 0.12], c: 0x9a50f0 }],
+      glowMat(0xffffff, 2.2), [x, y, z]);
     f.castShadow = false;
     const s = sprite(VIOLET, x, gy + 2.2, z, 5, 5); s.visible = true; s.material.opacity = 0.55;
     vflames.push({ f, s, ph: R.range(0, 6.28) });
