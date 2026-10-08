@@ -298,16 +298,16 @@ const THAO = 'M-20 70 C100 110 220 190 330 255 S560 330 700 350 S900 470 1050 56
 const DA = 'M-20 330 C100 300 230 280 330 255', LO = 'M430 -20 C410 80 360 180 330 255';
 const DUONG = 'M700 350 C820 300 1000 300 1150 320 S1400 420 1620 470', DAY = 'M330 300 C360 420 420 520 520 600 S640 700 760 920';
 const river = (d, w1, w2) => `<path d="${d}" stroke="#6f7c78" stroke-width="${w1}" opacity=".32"/><path d="${d}" stroke="#46524f" stroke-width="${w2}" opacity=".7"/>`;
-// [id, dot x, dot y, place, warlord, joined Đinh]
+// [id, dot x, dot y, place, warlord, joined Đinh (true) | Kiều's ally, still standing at this battle ('ally': no mark)]
 const SEATS = [
-  ['hoiho', 170, 150, 'Hồi Hồ', 'Kiều Thuận'], ['tamdai', 560, 168, 'Tam Đái', 'Nguyễn Khoan'], ['duonglam', 190, 380, 'Đường Lâm', 'Ngô Nhật Khánh'],
+  ['hoiho', 170, 150, 'Hồi Hồ', 'Kiều Thuận', 'ally'], ['tamdai', 560, 168, 'Tam Đái', 'Nguyễn Khoan', 'ally'], ['duonglam', 190, 380, 'Đường Lâm', 'Ngô Nhật Khánh'],
   ['dodong', 420, 470, 'Đỗ Động Giang', 'Đỗ Cảnh Thạc'], ['tayphuliet', 700, 322, 'Tây Phù Liệt', 'Nguyễn Siêu'], ['tiendu', 900, 196, 'Tiên Du', 'Nguyễn Thủ Tiệp'],
   ['sieuloai', 1130, 286, 'Siêu Loại', 'Lý Khuê'], ['tegiang', 900, 424, 'Tế Giang', 'Lã Đường'], ['dangchau', 1130, 520, 'Đằng Châu', 'Phạm Bạch Hổ', true],
   ['bohai', 1290, 650, 'Bố Hải Khẩu', 'Trần Lãm', true], ['binhkieu', 330, 760, 'Bình Kiều', 'Ngô Xương Xí'],
 ];
 const seat = ([id, x, y, place, lord, joined]) => `<g class="pl-mark wei" data-id="w-${id}"><rect x="${x - 11}" y="${y - 11}" width="22" height="22" rx="3"/>` +
   `<text class="sm" x="${x + 22}" y="${y + 6}">${place}</text><text class="sm" x="${x + 22}" y="${y + 40}">${lord}</text></g>` +
-  (joined ? `<g class="pl-mark" data-id="j-${id}"><circle cx="${x}" cy="${y}" r="26" fill="none" stroke="#2f6f68" stroke-width="7"/></g>`
+  (joined === 'ally' ? '' : joined ? `<g class="pl-mark" data-id="j-${id}"><circle cx="${x}" cy="${y}" r="26" fill="none" stroke="#2f6f68" stroke-width="7"/></g>`
     : `<g class="pl-mark" data-id="f-${id}"><path d="M${x - 20} ${y - 20} L${x + 20} ${y + 20} M${x + 20} ${y - 20} L${x - 20} ${y + 20}" stroke="#24160b" stroke-width="8" stroke-linecap="round"/></g>`);
 export const PL_MAP = {
   art: `<g class="pl-mtns" fill="url(#pl-mtn)" filter="url(#pl-ink)">
@@ -325,8 +325,8 @@ export const PL_MAP = {
     ${SEATS.map(seat).join('')}
     <g class="pl-mark wei" data-id="phongchau"><rect x="316" y="238" width="30" height="30" rx="3"/><text x="356" y="272">Phong Châu</text><text class="sm" x="360" y="312">Kiều Công Hãn</text></g>
     <g class="pl-mark" data-id="hoalu"><rect x="624" y="660" width="32" height="32" rx="3"/><text x="668" y="694">Hoa Lư</text><text class="sm" x="672" y="732">Đinh Bộ Lĩnh</text></g>
-    <g class="pl-mark" data-id="dala"><text class="sm" x="740" y="372">Đại La</text></g>
-    <g class="pl-mark" data-id="rivers"><text class="sm river" x="110" y="96">Sông Thao</text><text class="sm river" x="1180" y="676">Sông Cái</text></g>
+    <g class="pl-mark" data-id="dala"><text class="sm" x="596" y="398">Đại La</text></g>
+    <g class="pl-mark" data-id="rivers"><text class="sm river" x="110" y="96">Sông Thao</text><text class="sm river" x="1330" y="806">Sông Cái</text></g>
     <g class="pl-mark" data-id="nghialinh"><text class="sm" x="150" y="236">Nghĩa Lĩnh</text></g>
   </g>`,
   arrows: [
