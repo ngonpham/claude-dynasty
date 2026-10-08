@@ -123,9 +123,9 @@ export default {
     dust: [8, 38, 1.5, 0.08], dustLit: 0x7a8496, dustShade: 0x2e3444, apCool: 0x5a6888,
   },
   fog: [20, 190],
-  light: { hemi: [0x8a98b4, 0x3a4430, 2.8], sun: [0xd0dcf0, 1.9], rim: [0xd8e2f4, 1.6], dir: [0.2, 0.62, 0.78], fire: 0xff8a40,
+  light: { hemi: [0x8a98b4, 0x3a4430, 2.5], sun: [0xd0dcf0, 1.7], rim: [0xd8e2f4, 1.6], dir: [0.2, 0.62, 0.78], fire: 0xff8a40,
     fill: [-400, -390, 0.6] },
-  post: { exposure: 1.75, sat: 0.95, bloom: 0.6, rays: 0.25, rayTint: [0.82, 0.9, 1.1], shadowTint: [0.85, 0.95, 1.2], highTint: [0.95, 1.0, 1.08] },
+  post: { exposure: 1.6, sat: 1.0, bloom: 0.6, rays: 0.25, rayTint: [0.82, 0.9, 1.1], shadowTint: [0.85, 0.95, 1.2], highTint: [0.95, 1.0, 1.08] },
   castle: null,
   terrain: {
     pave: (x, z) => -0.6 + (Math.hypot(x - SHELTER[0], z - SHELTER[1]) < 9 ? 0.5 : 0),     // mud; the shelter's dry floor
@@ -279,17 +279,20 @@ function buildSet(root, k) {
   // ---- puddles along the route (not in the ravine's flood band)
   const pb = [];
   for (let z = -190; z < 184; z += 5.5) {
-    const x = r.range(-6, 6), w = r.range(1.2, 3.4), d = r.range(1, 2.6);
+    const x = r.range(-6, 6), w = r.range(1, 2.4), d = r.range(0.8, 1.8);
     if (walkIn(x, z) < 1.5 || waterD(x, z) < HW + 4 || routeDist(x, z) > 7) continue;
-    pb.push({ s: [w, 0.05, d], p: [x, ground(x, z) + 0.05, z], r: [0, r.range(0, 3), 0], c: 0x3a4250 });
+    for (let q = 0; q < 3; q++) {                                                                 // three overlapping lobes: an irregular pool
+      const px = x + r.range(-0.6, 0.6) * w, pz = z + r.range(-0.6, 0.6) * d;
+      pb.push({ s: [w * r.range(0.5, 0.9), 0.02, d * r.range(0.5, 0.9)], p: [px, ground(px, pz) + 0.03, pz], r: [0, r.range(0, 3), 0], c: 0x7a8698 });
+    }
   }
-  const puddles = new THREE.Mesh(boxesGeometry(pb), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.1, metalness: 0.3, emissive: 0x0e141c, emissiveIntensity: 1 }));
-  puddles.receiveShadow = true; puddles.name = 'puddles';
+  const puddles = new THREE.Mesh(boxesGeometry(pb), new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.06, metalness: 0.55, emissive: 0x262e3a, emissiveIntensity: 1 }));
+  puddles.receiveShadow = false; puddles.name = 'puddles';
   root.add(puddles);
 
   // ---- rain (one instanced draw): N streaks in a 56 m box round the hero, fixed in the world as he moves
   const N = 560, BOX = 56, TOP = 22, rain = new THREE.InstancedMesh(new THREE.BoxGeometry(0.03, 1.3, 0.03),
-    new THREE.MeshBasicMaterial({ color: 0xb4c0d4, transparent: true, opacity: 0.28, depthWrite: false }), N);
+    new THREE.MeshBasicMaterial({ color: 0xb4c0d4, transparent: true, opacity: 0.2, depthWrite: false }), N);
   rain.frustumCulled = false; rain.name = 'rain';
   root.add(rain);
   const drops = Array.from({ length: N }, (_, i) => [hash01(i, 1, 11) * BOX, hash01(i, 2, 11) * BOX, hash01(i, 3, 11), 0.8 + hash01(i, 4, 11) * 0.4]);

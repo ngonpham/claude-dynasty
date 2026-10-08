@@ -558,7 +558,7 @@ export const TRIAL = {
   BEATS: [
     {
       when: { wait: 30 }, waves: true, morale: -0.1,
-      defend: { key: 'quan', at: QUAN, r: 5, hp: 3200, name: { zh: 'Cỗ quan rỗng', en: 'The Empty Coffin' } },
+      defend: { key: 'quan', at: QUAN, r: 5, hp: 3800, name: { zh: 'Cỗ quan rỗng', en: 'The Empty Coffin' } },
       fail: { when: { hp: ['quan', 0.01] }, zh: 'Kỵ binh đã cướp được cờ vàng……', en: 'The riders have taken the yellow banner...' },
       obj: { zh: 'Một mình giữ đầu đường một ngựa', en: 'Hold the head of the one-horse path alone', go: ['motEnd', 0, 1], timer: 240 },
       squads: [onPath(-12, 14), onPath(-26, 14), onPath(-40, 14)],

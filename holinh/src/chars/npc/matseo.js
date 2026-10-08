@@ -12,7 +12,7 @@
 // a ragged charcoal cloak in three panels (frayed edges, a torn hem, a few moth holes) and two dirty red rags knotted
 // under the weapon's head. Weapon: a cleaver-glaive — a broad rectangular chopping blade like a giant butcher's cleaver
 // (a thick dark spine, a square clipped tip, a hole near the spine, the edge notched from use) on a socket with iron
-// langets, a dark haft bound with iron bands and cord grips, an iron butt cap.
+// langets, a dark haft bound with iron bands and cord grips, an iron butt cap. The flat is dull iron, only the edge glints.
 import { npcKit } from '../../../../src/chars/npc/kit.js';
 import * as POLEARM from '../../../../src/chars/npc/polearm.js';
 import { vox, B, P, md, mirX, lamellar } from '../../../../src/hero/model.js';
@@ -176,7 +176,7 @@ function weaponGeo() {
   ], v, { jitter: 0.04, ao: 0.25 });
   // the blade (z 1.66 … 2.30): a thick dark spine on −X, a broad flat to the edge on +X, widening a little to a square
   // tip whose spine corner is clipped; a hole near the spine; the edge notched
-  const boxes = [], notch = new Set([zb + 9, zb + 10, zb + 24, zb + 38, zb + 39, zb + 46]);
+  const boxes = [], edge = [], notch = new Set([zb + 9, zb + 10, zb + 24, zb + 38, zb + 39, zb + 46]);
   for (let z = zb; z < zt; z++) {
     const u = (z - zb) / (zt - zb), e = 14 + Math.round(u * 3), clip = zt - z < 6 ? (6 - (zt - z)) * 2 : 0;
     for (let x = -3 + clip; x < e; x++) {
@@ -184,11 +184,12 @@ function weaponGeo() {
       if (Math.hypot(x - 2, z - (zt - 9)) < 2.2) continue;                                       // the hole
       const c = x === e - 1 ? C.edge : x <= -2 ? C.back : x <= 0 || Math.hypot(x - 2, z - (zt - 9)) < 3.3 ? C.steelD
         : hash01(x + 30, z, 3) < 0.12 ? C.steelD : C.steel;
-      boxes.push(B([x, x <= -2 ? -2 : -1, z], [x + 1, x <= -2 ? 2 : 1, z + 1], c));
+      (c === C.edge ? edge : boxes).push(B([x, x <= -2 ? -2 : -1, z], [x + 1, x <= -2 ? 2 : 1, z + 1], c));
     }
   }
-  const blade = vox(boxes, v, { jitter: 0.03, ao: 0.2 });
-  return [{ geo: shaft, mat: 'body' }, { geo: iron, mat: 'metal' }, { geo: blade, mat: 'blade' }];
+  // the flat is dull iron (metal), only the honed edge takes the bright blade material
+  return [{ geo: shaft, mat: 'body' }, { geo: iron, mat: 'metal' }, { geo: vox(boxes, v, { jitter: 0.03, ao: 0.2 }), mat: 'metal' },
+    { geo: vox(edge, v, { jitter: 0.02, ao: 0.1 }), mat: 'blade' }];
 }
 
 // ---------------------------------------------------------------- chain segments (local −Y along the chain)
