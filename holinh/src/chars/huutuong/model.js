@@ -34,7 +34,7 @@ export const C = {
 };
 const hairP = (x, y, z) => {
   const s = md(x * 3 + (z >> 1), 11);
-  if (Math.abs(x) >= 7 && y < 13) return hash01(x, y, z) < 0.55 ? C.greyL : C.grey;     // grey heaviest at the temples
+  if (Math.abs(x) >= 7 && y < 13 && md(z + (x > 0 ? 0 : 1), 3) === 0) return hash01(x, y, z) < 0.5 ? C.greyL : C.grey;   // grey heaviest at the temples
   return s === 0 || s === 6 ? C.grey : s === 3 ? C.greyL : hash01(x, y, z + 5) < 0.12 ? C.hairH : C.hair;
 };
 const cloth = (x, y, z) => (md(x * 2 + y + z * 3, 11) === 0 ? C.indL : md(x - y * 2 + z, 9) === 0 ? C.indD : C.ind);

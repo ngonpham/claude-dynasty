@@ -176,14 +176,14 @@ export const DEF = {
   chains: () => [
     // the high ponytail: from the knot at the crown, back and down past the shoulder blades
     { joint: 'head', anchor: [0, 19 * HV, -5 * HV], rest: [0, -0.35, -1], n: 7, len: 0.07, stiff: 0.1, drag: 0.12, wind: 1.2, cone: 100, sway: 0.25,
-      seg: tail, hit: ['head', 'chest', ['spine', 0.01]] },
+      seg: tail, hit: ['head', 'chest'] },
     ...[-1, 1].map((sx) => ({ joint: 'head', anchor: [sx * 2 * HV, 17 * HV, -7 * HV], rest: [sx * 0.3, -1, -0.4], n: 3, len: 0.05, stiff: 0.06, drag: 0.1,
       wind: 1.4, cone: 110, sway: 0.25, face: [1, 0, 0], seg: cord, hit: ['head'] })),
     // the crimson cloak in two panels from the shoulder rings, and the scarf end hanging from the collar
     ...[-0.07, 0.07].map((x) => ({ joint: 'chest', anchor: [x, 0.21, -0.13], rest: [x, -1, -0.2], n: 6, len: 0.12, stiff: 0.15, drag: 0.22, wind: 1.2,
       cone: 80, sway: 0.2, seg: cape, hit: ['chest', 'hips', 'thighL', 'thighR', 'kneeL', 'kneeR'] })),
     { joint: 'chest', anchor: [0.05, 0.24, 0.1], rest: [0.15, -1, 0.4], n: 4, len: 0.09, stiff: 0.1, drag: 0.16, wind: 1.3, cone: 90, sway: 0.25,
-      face: [0, 0, 1], seg: scarf, hit: [['chest', 0.02], ['spine', 0.02], ['hips', 0.02]] },
+      face: [0, 0, 1], seg: scarf, hit: [['chest', 0.02], ['hips', 0.02]] },
     ...[0, 1, 2].map((k) => ({ joint: 'weapon', anchor: [(k - 1) * 0.006, 0, -0.12], rest: [(k - 1) * 0.2, -1, -0.2], n: 3, len: 0.05, stiff: 0.05, drag: 0.12,
       wind: 0.8, cone: 140, sway: 0.15, face: [1, 0, 0], seg: strand })),
   ],
