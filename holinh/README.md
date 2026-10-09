@@ -100,7 +100,8 @@ Bộ đạo cụ Việt (núi đá vôi, tre, lau, nhà sàn, thuyền, trống 
 quan tài, nến, án thờ, chuông đồng, cò trắng, sợi chỉ son (`holinh/src/world/viet.js`). Quy tắc chi tiết, danh sách nhân
 vật, đạo quân và kế hoạch từng màn: [`DESIGN.md`](DESIGN.md).
 
-Kiểm tra không cần trình duyệt: `node holinh/checks/walk.mjs [màn] [tướng]` chạy trọn kịch bản trận với mô phỏng thật.
+Kiểm tra không cần trình duyệt: `node holinh/checks/walk.mjs [màn] [tướng]` chạy trọn kịch bản trận với mô phỏng thật;
+`node holinh/checks/trials-bot.mjs [thử thách] [tướng]` cho các thử thách.
 Thêm chữ Hán mới thì chạy `python3 holinh/fonts/subset.py` để dựng lại `holinh/fonts/han-brush.woff2`.
 
 ## Ghi công

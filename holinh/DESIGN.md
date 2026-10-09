@@ -135,6 +135,7 @@ As 十二使君 (Vietnamese UI, English subtitles), re-skinned: logo **護靈壯
 
 ```
 node holinh/checks/walk.mjs [stage] [hero]       # headless: the whole battle script walked with real sim (QA assist)
+node holinh/checks/trials-bot.mjs [trial] [hero] [difficulty] [seed] [--dodge]   # trials, inputs-only bot
 python3 -m http.server 8123                       # repo root, then:
 W=960 H=540 node holinh/tools/shot.mjs "http://localhost:8123/holinh/?go=story&ch=quenthanh&char=huutuong&enemies=60" /tmp/x.png 30000
 ```
