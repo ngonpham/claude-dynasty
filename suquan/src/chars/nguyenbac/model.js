@@ -15,7 +15,6 @@ import { hash01 } from '../../../../src/core/rng.js';
 import { FV, hand, bareArm, boot, symH } from '../../../../src/chars/parts.js';
 import { withVox } from '../voxbody.js';
 import { VOX } from '../vox/nguyenbac.js';
-import { VOX as FINE } from '../vox/nguyenbac.hi.js';
 
 export const HV = 0.013;
 export const C = {
@@ -184,7 +183,7 @@ const tassel = (i, n) => vox([B([-1, -6, -1], [2, 0, 2], (x, y, z) => (i === n -
 
 export const NGUYENBAC_DEF = {
   // body: the Higgsfield model voxelised (../vox, suquan/tools/glb2vox.py); hands, weapon and chains stay authored here
-  build: withVox(() => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: weaponGeo() }), VOX, FINE),
+  build: withVox(() => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: weaponGeo() }), VOX, 'nguyenbac'),
   chains() {
     const legs = [['thighL', 0.03], ['thighR', 0.03], ['kneeL', 0.03], ['kneeR', 0.03]];
     return [

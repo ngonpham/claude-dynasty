@@ -35,6 +35,7 @@ import { createPrologue } from '../../src/story/prologue.js';
 import { createResult } from '../../src/story/result.js';
 import { difficulty } from '../../src/core/difficulty.js';
 import { record } from '../../src/core/progress.js';
+import { loadFine, fineReady } from './chars/voxbody.js';
 
 const params = new URLSearchParams(location.search);
 const ENEMIES = Math.max(0, Math.min(2000, params.get('enemies') ? Number(params.get('enemies')) | 0 : 300));
@@ -69,7 +70,9 @@ const actorsView = createActorsView(scene, game, () => post.compile(scene, camRi
 const pickupsView = createPickupsView(scene, game);
 // kit views (hero model + chains + ghosts, Musou grade/dragon/cut-in): rebuilt when the character's kit changes
 let heroView, musouView, dropViews = null;
+let viewsFine = false;                          // the hero view was built with its officer's fine body (voxbody.js)
 function buildViews() {
+  viewsFine = fineReady(game.hero.char.id);
   if (dropViews) { dropViews(); heroView.dispose(); musouView.dispose(); }
   [[heroView, musouView], dropViews] = collect(() => [createHeroView(scene, game.hero), game.hero.kit.createMusouView(scene, game, camRig.camera)]);
 }
@@ -129,7 +132,7 @@ function startBattle({ char = DEFAULT_CHAR, mode = 'free', ch, map } = {}) {
   if (newKit) game.musou = who.kit.createMusou(game);
   game.cam.reset(p.yaw); game.cam.tilt = p.tilt || 0;           // first: crowd.reset takes the allies' front from the camera yaw
   game.crowd.reset(); game.combat.reset(); game.musou.reset();
-  if (newKit) buildViews();
+  if (newKit || (fineReady(char) && !viewsFine)) buildViews();   // (same officer, fine body fetched since)
   heroView.reset();
   game.actors.reset(); game.pickups.reset();                                              // C5
   game.story.reset({ mode, char, ch });                                                    // C2
@@ -223,6 +226,8 @@ async function deploy(c) {
   if (state !== 'loading') return;
   const t0 = performance.now(), stage = async (p, zh, en) => { L.progress(p, zh, en); await nextFrame(); await nextFrame(); };
   await stage(0.18, 'Điểm tướng', 'Summoning the officer');
+  await loadFine(c.char);                          // the played officer's fine voxel body (chars/voxbody.js)
+  if (state !== 'loading') return;
   startBattle(c);
   await stage(0.5, 'Bày trận', 'Deploying the ranks');
   await post.compile(scene, camRig.camera);
@@ -272,5 +277,5 @@ const dev = params.get('go');
 // the page opens under full ink (index.html): the first screen is built and compiled under it, then the ink sweeps off
 const devChar = params.get('char') || DEFAULT_CHAR;
 const devCh = chapter(params.get('ch') || CHAPTERS.find((m) => m.CH.heroes.includes(devChar))?.CH.id).CH.id;
-inkBoot(() => dev ? flow.go('battle', { mode: ['story', 'trial'].includes(dev) ? dev : 'free', char: devChar, ch: devCh, map: params.get('map') || undefined }) : flow.go('title'));
+inkBoot(async () => dev ? (await loadFine(devChar), flow.go('battle', { mode: ['story', 'trial'].includes(dev) ? dev : 'free', char: devChar, ch: devCh, map: params.get('map') || undefined })) : flow.go('title'));
 requestAnimationFrame(frame);

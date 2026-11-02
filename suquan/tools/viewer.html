@@ -29,11 +29,13 @@ import { NPCS } from '../../src/chars/npc/index.js';
 import { createRig, sampleClip, POSE_SIZE, HERO_SCALE } from '../../src/hero/rig.js';
 import { loadMap } from '../../src/world/map.js';
 import { MAPS } from '../../src/world/maps/index.js';
+import { loadFine } from '../src/chars/voxbody.js';
 
 loadMap(MAPS.hoalu);
 const q = new URLSearchParams(location.search);
 const ids = (q.get('ids') || CHAR_ORDER.join(',')).split(',');
 const clipB = q.get('clip') || 'n3', tB = +(q.get('t') || 0.45);
+if (q.has('hero')) await Promise.all(ids.map(loadFine));
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(innerWidth, innerHeight); renderer.setPixelRatio(1);
 document.body.appendChild(renderer.domElement);

@@ -127,7 +127,11 @@ swaps a def's authored body for it and keeps the authored hands (closed grips), 
 torso between the rig's hip and shoulder sockets, stretches each limb bone to the rig's length (elbows, wrists, knees,
 ankles stay on the rig, so grips and foot IK still meet), voxelises at FV = 0.0125 m with texture colours quantised to
 56, and fills each part's interior per slice. Check bodies without a battle: `/suquan/tools/viewer.html?ids=a,b&zoom=2`.
-Higgsfield jobs (concept → GLB): dinhbolinh 3b63f94d → 3bcd161a · nguyenbac dc8745f1 → 26291d8a · lehoan 233198f6 →
-f0b4e823 · dinhlien 36629361 → 25f6f2d9 · phambachho b384789f → 7327cdee · khuongviet 39dce313 → 226eb77c ·
-docanhthac 0b7913b0 → 0c7ffa57 · ngoxuongvan 6708d990 → eb7aeb11 · nguyensieu 9b206616 → 40e5c8ce · kieuconghan
-db7ed5b8 → a094b0bc.
+Sharper pass: 2K high-quality concept re-renders (gpt_image_2_5 quality high, the first concepts as references) →
+Meshy 7 ultra, 100 k polys; 128-colour palettes; playable officers also get a fine body (FV / 2, `vox/<id>.hi.js`,
+≈ 1.1-1.6 M vertices) for the player's own officer in battle only — fetched on demand by voxbody.js `loadFine` under
+the loading card (suquan/src/main.js deploy), so a session downloads only the officer it plays.
+Higgsfield jobs (2K concept → ultra GLB): dinhbolinh 82f8ad28 → dcebaa25 · nguyenbac e3e3830e → 4cb0450a · lehoan
+6a7657df → c2d7e110 · dinhlien 61b155e6 → b24acad4 · phambachho 2a5a5cd5 → 2ef5d4f3 · khuongviet 694b63fc → d42e70ad ·
+docanhthac d68ba7ac → 23f228ad · ngoxuongvan 8325b767 → e0baeb69 · nguyensieu 07f1af36 → c6673f2c · kieuconghan
+fc4c9f3c → fa6d0ab1.
