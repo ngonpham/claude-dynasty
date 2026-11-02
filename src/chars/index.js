@@ -24,7 +24,9 @@
 //   feet               { moveId: (u, pose) => void } baked feet applied over a borrowed clip (moves.js `anim`)
 //   runPose(phase, k, out, lean), rollPose(u, out)   procedural run / dive roll poses
 //   dashPlant          dash move frame where the lunge lands (footstep dust), or -1
-//   model(rig) → { material, meshes }            voxel model on the shared rig (src/hero/rig.js)
+//   model(rig, o?) → { material, meshes }        voxel model on the shared rig (src/hero/rig.js); o.hero: it is the player's
+//                      own officer in battle (hero.js view, built under the loading card), so a kit may build a finer
+//                      model than its actors and the menu stage get
 //   secondary(scene, rig, material, hero?) → { update(dt), reset() }   cloth / hair chains (hero: the battle view's)
 //   trail              weapon ribbon {base, baseHeavy, tip} (m along the rig's weapon, vfx.js spearWorld) or a bow limb
 //                      {axis: 'y', …} (never null)

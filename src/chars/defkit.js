@@ -5,7 +5,7 @@
 //   export const X_KIT = defKit(def, moveset);      // CHARS.x.kit (src/chars/index.js)
 //
 // def = {
-//   build() → { parts: {joint: boxes}, head: boxes, bv, hv, pauldron?(sx) → boxes | [], weapon: [{ geo, mat }] }
+//   build(o?) → { parts: {joint: boxes}, head: boxes, bv, hv, pauldron?(sx) → boxes | [], weapon: [{ geo, mat }] }
 //              fine voxel body (chars/parts.js FV = 0.0125, parts centred on the joints), head voxel hv; pauldron absent =
 //              none, [] = none on that side; weapon meshes on the weapon joint (shaft +Z, origin = the rear grip), mat
 //              'body' | 'metal' | 'blade' | a Material (hero/model.js buildDef)
@@ -80,7 +80,7 @@ export function defKit(def, ms) {
     },
     rollPose: roll ? (u, out) => { rollPose(u, out); for (let i = CH.spear; i < CH.spin; i++) out[i] = roll[i]; return out; } : rollPose,
     dashPlant: M.dash.lunge.length > 1 ? M.dash.lunge[1][0] + 4 : -1,
-    model: (rig) => buildDef(rig, def.build()),
+    model: (rig, o) => buildDef(rig, def.build(o)),
     secondary: (scene, rig, mat) => chainSet(scene, rig, mat, def.chains()),
     scale: def.scale, reach: def.reach, trail: def.trail, weight: def.weight ?? 1, voice: def.voice,
     fx: { ...ZY_FX, musou: 'own', ...def.fx },

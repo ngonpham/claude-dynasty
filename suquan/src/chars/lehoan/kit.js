@@ -74,7 +74,7 @@ const kit = defKit({
 }, MOVESET);
 
 const model = kit.model, createMusouView = kit.createMusouView;
-kit.model = (rig) => twinSwords(rig, model(rig));
+kit.model = (rig, o) => twinSwords(rig, model(rig, o));
 kit.createMusou = LIUBEI_KIT.createMusou;
 kit.createMusouView = (scene, game, camera) => {
   const a = createMusouView(scene, game, camera), b = createTwinView(scene, game);

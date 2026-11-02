@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Rigged GLB (Higgsfield / Meshy image-to-3D, A-pose, humanoid skin) → a voxel body for the engine's def kits.
 
-    python3 -I suquan/tools/glb2vox.py model.glb out.js [--name ID] [--preview out.png]
+    python3 -I suquan/tools/glb2vox.py model.glb out.js [--name ID] [--v 0.0125] [--colors 128] [--fine out-hi.js]
 
 The engine's officers are voxel parts riding the shared rig (src/hero/rig.js: hips, spine, chest, neck, head, upper /
 fore arms, hands, thighs, shins, feet), every joint at rest axis-aligned with the root (+x left, +y up, +z forward),
@@ -14,7 +14,7 @@ limbs hanging straight down. A Meshy mesh stands in an A-pose on its own skeleto
      each vertex group into its joint's local frame, stretching limbs along the bone so the elbows, wrists, knees and
      ankles land on the rig's (DIM in rig.js) — hands still meet the weapon grips, feet still meet the IK targets;
   4. voxelises the surface (dense barycentric samples, colour from the texture at the sample's uv) at FV = 0.0125 m per
-     joint — a vertex with ≥ 30 % weight on a bone also lands in that joint, so bent elbows / knees overlap instead of
+     joint (--fine also writes a second record at FV / 2 for the player's own officer in battle, kit.model(rig, { hero: true })) — a vertex with ≥ 30 % weight on a bone also lands in that joint, so bent elbows / knees overlap instead of
      gaping — quantises the colours to a small palette and writes runs.
 The output module exports VOX = { pal: [0xRRGGBB…], parts: { joint: 'base64 runs' }, head: '…' } for suquan/src/chars/
 voxbody.js, which turns it back into def-kit boxes. Hands are not taken from the mesh (open A-pose hands): the kits keep
@@ -25,6 +25,8 @@ from PIL import Image
 import io
 
 FV = 0.0125
+VSIZE = FV           # the voxel size being written (main: --v / --fine)
+NCOL = 128
 # engine rest skeleton (pose units = metres before the kit scale; src/hero/rig.js createRig + DIM)
 DIM = dict(thigh=0.44, shin=0.44, upper=0.29, fore=0.27, spine=0.12, chest=0.2, neck=0.24, headUp=0.04,
            shoulderX=0.235, shoulderY=0.2, hipX=0.11, hipY=-0.05)
@@ -239,7 +241,7 @@ def convert(path, preview=None):
     vox = {}           # joint → dict[(x,y,z)] = rgb accumulators
     def put(e, pts, cols):
         d = vox.setdefault(e, {})
-        q = np.floor(pts / FV).astype(int)
+        q = np.floor(pts / VSIZE).astype(int)
         for (x, y, z), c in zip(map(tuple, q), cols):
             k = (x, y, z)
             if k in d: d[k][0] += c; d[k][1] += 1
@@ -261,7 +263,7 @@ def convert(path, preview=None):
             if not len(tri): continue
             a, b, c = P[tri[:, 0]], P[tri[:, 1]], P[tri[:, 2]]
             area = 0.5 * np.linalg.norm(np.cross(b - a, c - a), axis=1) * g * g
-            n = np.maximum(1, np.ceil(area / (FV * FV * 0.12))).astype(int)
+            n = np.maximum(1, np.ceil(area / (VSIZE * VSIZE * 0.12))).astype(int)
             ti = np.repeat(np.arange(len(tri)), n)
             u = rng.random(len(ti)); v = rng.random(len(ti)); flip = u + v > 1; u[flip] = 1 - u[flip]; v[flip] = 1 - v[flip]
             pts = a[ti] + (b[ti] - a[ti]) * u[:, None] + (c[ti] - a[ti]) * v[:, None]
@@ -277,8 +279,8 @@ def convert(path, preview=None):
     # palette: median-cut over every voxel colour
     keys = [(e, k) for e in vox for k in vox[e]]
     cols = np.array([vox[e][k][0] / vox[e][k][1] for e, k in keys]).clip(0, 255).astype(np.uint8)
-    im = Image.fromarray(cols.reshape(1, -1, 3), 'RGB').quantize(colors=56, method=Image.Quantize.MEDIANCUT)
-    pal = im.getpalette()[:56 * 3]
+    im = Image.fromarray(cols.reshape(1, -1, 3), 'RGB').quantize(colors=NCOL, method=Image.Quantize.MEDIANCUT)
+    pal = im.getpalette()[:NCOL * 3]
     idx = np.asarray(im).reshape(-1)
     out = {}
     for (e, k), ci in zip(keys, idx): out.setdefault(e, []).append((*k, int(ci)))
@@ -309,11 +311,8 @@ def solid(vs):
         if (g == out_).all(): break
         out_ = g
     inner = ~out_ & ~occ
-    # colour the interior from the nearest shell voxel above (any colour would do: it is never seen)
-    for y in range(dims[1] - 2, -1, -1):
-        m = inner[:, y, :] & (col[:, y, :] < 0)
-        col[:, y, :][m] = col[:, y + 1, :][m]
-    col[inner & (col < 0)] = int(np.bincount(a[:, 3]).argmax())
+    # one colour for the whole interior (it is never seen): long runs, a small file
+    col[inner] = int(np.bincount(a[:, 3]).argmax())
     filled = np.argwhere(occ | inner)
     return [(int(x + lo[0]), int(y + lo[1]), int(z + lo[2]), int(col[x, y, z])) for x, y, z in filled]
 
@@ -334,23 +333,35 @@ def runs(vs):
     return out
 
 
-def main():
-    args = sys.argv[1:]
-    src, dst = args[0], args[1]
-    name = args[args.index('--name') + 1] if '--name' in args else os.path.splitext(os.path.basename(dst))[0]
-    parts, pal, found = convert(src)
+def write(dst, name, parts, pal, v):
     head = parts.pop('head', [])
     for e, vs in parts.items():
         lo = np.min(np.array(vs)[:, :3], 0); hi = np.max(np.array(vs)[:, :3], 0)
         assert lo.min() >= -128 and hi.max() < 127, f'{e} out of int8 range {lo} {hi}'
     enc = {e: base64.b64encode(runs(vs)).decode() for e, vs in parts.items()}
-    henc = base64.b64encode(runs(head)).decode()
     with open(dst, 'w') as f:
-        f.write(f'// {name}: voxel body converted from a Higgsfield (Meshy image-to-3D) rigged GLB by suquan/tools/glb2vox.py —\n'
-                f'// generated data, do not edit by hand (re-run the tool). Decoder: suquan/src/chars/voxbody.js.\n')
-        f.write('export const VOX = ' + json.dumps({'pal': pal, 'parts': enc, 'head': henc}, separators=(',', ':')) + ';\n')
-    n = sum(len(v) for v in parts.values()) + len(head)
-    print(f'{dst}: {n} voxels, {len(pal)} colours, joints {sorted(parts)} head {len(head)}; {found}')
+        f.write(f'// {name}: voxel body ({v * 1000:g} mm voxels) converted from a Higgsfield (Meshy image-to-3D) rigged GLB by\n'
+                f'// suquan/tools/glb2vox.py — generated data, do not edit by hand (re-run the tool). Decoder: suquan/src/chars/voxbody.js.\n')
+        f.write('export const VOX = ' + json.dumps({'v': v, 'pal': pal, 'parts': enc, 'head': base64.b64encode(runs(head)).decode()}, separators=(',', ':')) + ';\n')
+    return sum(len(x) for x in parts.values()) + len(head)
+
+
+def main():
+    global VSIZE, NCOL
+    args = sys.argv[1:]
+    src, dst = args[0], args[1]
+    opt = lambda k, d=None: args[args.index(k) + 1] if k in args else d
+    name = opt('--name', os.path.splitext(os.path.basename(dst))[0])
+    NCOL = int(opt('--colors', 128))
+    VSIZE = float(opt('--v', FV))
+    parts, pal, info = convert(src)
+    n = write(dst, name, parts, pal, VSIZE)
+    print(f'{dst}: {n} voxels at {VSIZE}, {len(pal)} colours; {info}')
+    if opt('--fine'):
+        VSIZE = FV / 2
+        parts, pal, info = convert(src)
+        n = write(opt('--fine'), name, parts, pal, VSIZE)
+        print(f'{opt("--fine")}: {n} voxels at {VSIZE}, {len(pal)} colours')
 
 
 if __name__ == '__main__':

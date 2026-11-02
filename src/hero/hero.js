@@ -136,7 +136,7 @@ export function createHeroView(scene, hero) {
   scene.add(root);
   const rig = createRig(K);
   root.add(rig.root);
-  const model = K.model(rig);
+  const model = K.model(rig, { hero: true });
   const secondary = K.secondary(root, rig, model.material, hero);
   const ghosts = createDodgeGhosts(root, model);    // dodge afterimages + i-frame flash (locomotion-dodge)
   const pose = new Float32Array(POSE_SIZE);

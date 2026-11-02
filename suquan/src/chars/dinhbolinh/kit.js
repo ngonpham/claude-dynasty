@@ -27,7 +27,7 @@ const LOOK = {
 
 export const DINHBOLINH_KIT = {
   ...ZHAOYUN_KIT,
-  model: (rig) => buildDef(rig, DINHBOLINH_DEF.build()),
+  model: (rig, o) => buildDef(rig, DINHBOLINH_DEF.build(o)),
   secondary: (scene, rig, mat) => chainSet(scene, rig, mat, DINHBOLINH_DEF.chains()),
   reach: { tip: 2.04, butt: 0.86 },
   trail: { base: 1.3, baseHeavy: 1.1, tip: 2.12 },

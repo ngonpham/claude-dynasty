@@ -19,6 +19,7 @@ import { hash01 } from '../../../../src/core/rng.js';
 import { FV, hand, symH } from '../../../../src/chars/parts.js';
 import { withVox } from '../voxbody.js';
 import { VOX } from '../vox/khuongviet.js';
+import { VOX as FINE } from '../vox/khuongviet.hi.js';
 
 export const HV = 0.013;
 export const C = {
@@ -216,7 +217,7 @@ const cordSeg = (i, n) => vox([B([-1, -6, -1], [1, 0, 1], (x, y) => (i === n - 1
 
 export const KHUONGVIET_DEF = {
   // body: the Higgsfield model voxelised (../vox, suquan/tools/glb2vox.py); hands, weapon and chains stay authored here
-  build: withVox(() => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, weapon: weaponGeo() }), VOX),   // no pauldron: none
+  build: withVox(() => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, weapon: weaponGeo() }), VOX, FINE),   // no pauldron: none
   chains() {
     const out = [];
     // the cà sa's fall from the left shoulder (heaviest), the robe's front panel, the cord tails, the mala tassel

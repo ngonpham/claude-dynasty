@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Officer viewer</title>
-<!-- Dev tool: every officer (or ?ids=a,b) on its own rig, front and back, idle and mid-attack, no battle — for checking
+<!-- Dev tool: every officer (or ?ids=a,b; &hero = the fine battle-hero model, &zoom=2) on its own rig, front and back, idle and mid-attack, no battle — for checking
      models (e.g. the Higgsfield voxel bodies) quickly. Serve the repo root and open /suquan/tools/viewer.html. -->
 <script type="importmap">
 { "imports": {
@@ -47,7 +47,7 @@ ids.forEach((id, i) => {
   if (!ch) return;
   const K = ch.kit;
   [[0, 'idle', 0.3], [Math.PI, 'idle', 0.3], [0, clipB, tB]].forEach(([yaw, clip, t], r) => {
-    const rig = createRig(K), m = K.model(rig);
+    const rig = createRig(K), m = K.model(rig, q.has('hero') ? { hero: true } : undefined);
     scene.add(rig.root);
     sampleClip(K.clips[clip] || K.clips.idle, t, pose);
     rig.apply(pose, new THREE.Vector3(((i * 3 + r) - (ids.length * 3 - 1) / 2) * gap, 0, 0), yaw, 0);
