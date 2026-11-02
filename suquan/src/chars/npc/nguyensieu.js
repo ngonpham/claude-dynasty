@@ -15,6 +15,8 @@ import * as POLEARM from '../../../../src/chars/npc/polearm.js';
 import { vox, B, P, md, mirX, lamellar } from '../../../../src/hero/model.js';
 import { hash01 } from '../../../../src/core/rng.js';
 import { FV, hand, bracer, boot, symH } from '../../../../src/chars/parts.js';
+import { withVox } from '../voxbody.js';
+import { VOX } from '../vox/nguyensieu.js';
 
 const HV = 0.013;
 const C = {
@@ -211,7 +213,8 @@ const tassel = (i) => {
 const DEF = {
   scale: 1.1,
   reach: { tip: 2.62, butt: 0.72 },
-  build: () => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: weaponGeo() }),
+  // body: the Higgsfield model voxelised (../vox, suquan/tools/glb2vox.py); hands, weapon and chains stay authored here
+  build: withVox(() => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: weaponGeo() }), VOX),
   chains() {
     const out = [];
     // the egret plume from the front knot of the head-wrap: blue at the root, pale blue and white at the tips

@@ -16,6 +16,8 @@
 import { vox, B, P, md, mirX, lamellar } from '../../../../src/hero/model.js';
 import { hash01 } from '../../../../src/core/rng.js';
 import { FV, glove, bracer, boot, symH } from '../../../../src/chars/parts.js';
+import { withVox } from '../voxbody.js';
+import { VOX } from '../vox/phambachho.js';
 
 export const HV = 0.013;
 export const C = {
@@ -234,7 +236,8 @@ const strand = (i, n) => {
 };
 
 export const PHAMBACHHO_DEF = {
-  build: () => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: weaponGeo() }),
+  // body: the Higgsfield model voxelised (../vox, suquan/tools/glb2vox.py); hands, weapon and chains stay authored here
+  build: withVox(() => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: weaponGeo() }), VOX),
   chains() {
     const out = [];
     // the pelt mantle from the ruff to the calves (heavy), the áo's front flap, three beard points

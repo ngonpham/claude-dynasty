@@ -17,6 +17,8 @@ import * as THREE from 'three';
 import { vox, B, P, md } from '../../../../src/hero/model.js';
 import { hash01 } from '../../../../src/core/rng.js';
 import { FV, hand, symH } from '../../../../src/chars/parts.js';
+import { withVox } from '../voxbody.js';
+import { VOX } from '../vox/khuongviet.js';
 
 export const HV = 0.013;
 export const C = {
@@ -213,7 +215,8 @@ const tasselSeg = (i, n) => vox([B([-1, -6, -1], [1, 0, 1], (x, y) => (i === 0 ?
 const cordSeg = (i, n) => vox([B([-1, -6, -1], [1, 0, 1], (x, y) => (i === n - 1 && y < -4 ? C.Kl : C.Kd))], FV, { jitter: 0.04, ao: 0.15 });
 
 export const KHUONGVIET_DEF = {
-  build: () => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, weapon: weaponGeo() }),   // no pauldron: none
+  // body: the Higgsfield model voxelised (../vox, suquan/tools/glb2vox.py); hands, weapon and chains stay authored here
+  build: withVox(() => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, weapon: weaponGeo() }), VOX),   // no pauldron: none
   chains() {
     const out = [];
     // the cà sa's fall from the left shoulder (heaviest), the robe's front panel, the cord tails, the mala tassel

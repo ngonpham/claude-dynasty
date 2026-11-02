@@ -16,6 +16,8 @@ import * as THREE from 'three';
 import { vox, B, P, md, lamellar, buildDef } from '../../../../src/hero/model.js';
 import { chainSet } from '../../../../src/hero/secondary.js';
 import { FV, hand, glove, bracer, boot, symH } from '../../../../src/chars/parts.js';
+import { withVox } from '../voxbody.js';
+import { VOX } from '../vox/dinhlien.js';
 
 export const HV = 0.013;
 export const C = {
@@ -155,7 +157,7 @@ function quiverGeo() {
 /** His body, head and bow (hero/model.js buildDef), the quiver slung across his back from the left hip to over the right
  *  shoulder (on the chest joint). → { meshes, material } */
 export function createDinhLienModel(rig) {
-  const m = buildDef(rig, { parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: [{ geo: bowGeo(), mat: 'metal' }] });
+  const m = buildDef(rig, withVox(() => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: [{ geo: bowGeo(), mat: 'metal' }] }), VOX)());   // body: the Higgsfield model voxelised (../vox)
   const sling = new THREE.Object3D();
   sling.position.set(0.13, -0.2, -0.16); sling.rotation.set(-0.15, 0, 0.62);
   rig.joints.chest.add(sling);

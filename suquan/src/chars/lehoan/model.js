@@ -12,6 +12,8 @@
 import { vox, B, P, md, mirX, lamellar } from '../../../../src/hero/model.js';
 import { hash01 } from '../../../../src/core/rng.js';
 import { FV, glove, bracer, boot, symH } from '../../../../src/chars/parts.js';
+import { withVox } from '../voxbody.js';
+import { VOX } from '../vox/lehoan.js';
 
 export const HV = 0.013;
 export const C = {
@@ -159,7 +161,8 @@ const panel = (i, n) => vox([B([-4, -8, 0], [4, 0, 1], (x, y) => (i === n - 1 &&
 const ribbon = (c, d) => (i, n) => vox([B([-1, -6, 0], [1, 0, 1], i === n - 1 ? d : c)], 0.012, { off: [0, 0, -0.5], jitter: 0.05, ao: 0.1 });
 
 export const LEHOAN_DEF = {
-  build: () => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: swordGeo() }),
+  // body: the Higgsfield model voxelised (../vox, suquan/tools/glb2vox.py); hands, weapon and chains stay authored here
+  build: withVox(() => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: swordGeo() }), VOX),
   chains() {
     const legs = [['thighL', 0.03], ['thighR', 0.03], ['kneeL', 0.03], ['kneeR', 0.03]];
     return [

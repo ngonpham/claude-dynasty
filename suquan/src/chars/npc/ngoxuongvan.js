@@ -15,6 +15,8 @@ import * as SWORD from '../../../../src/chars/npc/sword.js';
 import { vox, B, P, md, mirX, lamellar } from '../../../../src/hero/model.js';
 import { hash01 } from '../../../../src/core/rng.js';
 import { FV, glove, bracer, boot, symH } from '../../../../src/chars/parts.js';
+import { withVox } from '../voxbody.js';
+import { VOX } from '../vox/ngoxuongvan.js';
 
 const HV = 0.013;
 const C = {
@@ -180,7 +182,8 @@ const strand = (i, n) => vox([B([-1, -6, -1], [1, 0, 1], (x, y, z) => (i === n -
 export const DEF = {
   scale: 1.06,
   reach: { tip: 0.96, butt: 0.14 },
-  build: () => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: weaponGeo() }),
+  // body: the Higgsfield model voxelised (../vox, suquan/tools/glb2vox.py); hands, weapon and chains stay authored here
+  build: withVox(() => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: weaponGeo() }), VOX),
   chains: () => [
     { joint: 'chest', anchor: [0, 0.25, -0.16], rest: [0, -1, 0.15], n: 7, len: 0.17, stiff: 0.16, drag: 0.22, wind: 1.1, cone: 80, sway: 0.2,
       seg: capeSeg, hit: ['chest', 'hips', 'thighL', 'thighR', 'kneeL', 'kneeR'] },

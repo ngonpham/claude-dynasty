@@ -116,3 +116,18 @@ W=960 H=540 node suquan/tools/shot.mjs "http://localhost:8123/suquan/?go=story&c
 `?go=free|story|trial&char=<id>&ch=<chapter|trial>&map=<map>&enemies=N` as in the original README. Swiftshader is slow
 (a battle frame ≈ 0.5-1 s): budget 30-90 s per shot; check `PAGEERROR` lines first. Also play the battle script in
 your head against the map's zone / anchor tables: every beat position must land on walkable ground.
+
+## 10. Higgsfield models (voxel bodies)
+
+Every officer's and boss's body is a Higgsfield model: a concept render (`gpt_image_2_5`, front view, A-pose, empty
+hands) lifted to a textured, auto-rigged GLB (`meshy_v7_image_to_3d`), then voxelised onto the engine rig by
+`suquan/tools/glb2vox.py` → `suquan/src/chars/vox/<id>.js` (generated data). `suquan/src/chars/voxbody.js` `withVox`
+swaps a def's authored body for it and keeps the authored hands (closed grips), weapon and chains;
+`python3 suquan/tools/wirevox.py <id>` wires a new one. The converter re-poses the A-pose limbs straight down, fits the
+torso between the rig's hip and shoulder sockets, stretches each limb bone to the rig's length (elbows, wrists, knees,
+ankles stay on the rig, so grips and foot IK still meet), voxelises at FV = 0.0125 m with texture colours quantised to
+56, and fills each part's interior per slice. Check bodies without a battle: `/suquan/tools/viewer.html?ids=a,b&zoom=2`.
+Higgsfield jobs (concept → GLB): dinhbolinh 3b63f94d → 3bcd161a · nguyenbac dc8745f1 → 26291d8a · lehoan 233198f6 →
+f0b4e823 · dinhlien 36629361 → 25f6f2d9 · phambachho b384789f → 7327cdee · khuongviet 39dce313 → 226eb77c ·
+docanhthac 0b7913b0 → 0c7ffa57 · ngoxuongvan 6708d990 → eb7aeb11 · nguyensieu 9b206616 → 40e5c8ce · kieuconghan
+db7ed5b8 → a094b0bc.

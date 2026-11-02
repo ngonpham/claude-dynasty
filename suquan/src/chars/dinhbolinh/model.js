@@ -15,6 +15,8 @@
 import { vox, B, P, md, mirX, lamellar } from '../../../../src/hero/model.js';
 import { hash01 } from '../../../../src/core/rng.js';
 import { FV, hand, bracer, boot, symH } from '../../../../src/chars/parts.js';
+import { withVox } from '../voxbody.js';
+import { VOX } from '../vox/dinhbolinh.js';
 
 export const HV = 0.013;
 export const C = {
@@ -239,7 +241,8 @@ const tail = (c, d, e) => (i, n) => vox([B([-2, -6, 0], [2, 0, 1], (x, y) => (i 
   FV, { off: [0, 0, -0.5], jitter: 0.04, ao: 0.15 });
 
 export const DINHBOLINH_DEF = {
-  build: () => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: weaponGeo() }),
+  // body: the Higgsfield model voxelised (../vox, suquan/tools/glb2vox.py); hands, weapon and chains stay authored here
+  build: withVox(() => ({ parts: limbs(torso()), head: head(), bv: FV, hv: HV, pauldron, weapon: weaponGeo() }), VOX),
   chains() {
     const legs = [['thighL', 0.03], ['thighR', 0.03], ['kneeL', 0.03], ['kneeR', 0.03]];
     return [
